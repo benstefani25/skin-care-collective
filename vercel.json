@@ -1,0 +1,6 @@
+{
+  "crons": [
+    { "path": "/api/cron/generate-slots", "schedule": "0 9 * * *" },
+    { "path": "/api/cron/reminders", "schedule": "0 * * * *" }
+  ]
+}
