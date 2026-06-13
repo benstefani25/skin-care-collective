@@ -4,6 +4,7 @@ import { config } from "@/config/app";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { verifyToken } from "@/lib/links";
 import { fmtDate, fmtTime, hoursUntil, slotStart } from "@/lib/time";
+import { Wordmark } from "@/components/Wordmark";
 import { oneTapMove, oneTapSkip } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,7 @@ export const dynamic = "force-dynamic";
 function Note({ title, body }: { title: string; body: string }) {
   return (
     <div className="stack">
+      <Wordmark size={18} />
       <h1>{title}</h1>
       <p className="muted">{body}</p>
     </div>
@@ -74,11 +76,12 @@ export default async function OneTapPage({
 
   return (
     <div className="stack">
+      <Wordmark size={18} />
       <h1>Hi {appt.member?.first_name ?? "there"}!</h1>
       <div className="card">
-        <strong>
+        <div className="appt-time">
           {fmtDate(appt.slot.visit.date)} · {fmtTime(appt.slot.start_time)}
-        </strong>
+        </div>
         <p className="muted">Your spray tan appointment</p>
         {late && (
           <p className="fine">

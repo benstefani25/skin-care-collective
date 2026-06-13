@@ -86,7 +86,7 @@ export default async function PreferencesPage({
           <option value="late">Late</option>
         </select>
       </label>
-      <button className="btn" type="submit">
+      <button className="btn full" type="submit">
         Finish
       </button>
     </form>

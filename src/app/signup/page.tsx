@@ -1,5 +1,5 @@
-import { config } from "@/config/app";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { Wordmark } from "@/components/Wordmark";
 import { startSignup } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,11 @@ export default async function SignupPage({
 
   return (
     <form action={startSignup} className="stack">
-      <h1>Join {config.brandName}</h1>
+      <Wordmark size={20} />
+      <div>
+        <h1>Join your house</h1>
+        <p className="muted">A few quick details and you&apos;re set for the season.</p>
+      </div>
       {sp.error && <p className="banner error">{ERRORS[sp.error] ?? ERRORS.invalid}</p>}
       <label>
         Your house
@@ -56,7 +60,7 @@ export default async function SignupPage({
         Email
         <input name="email" type="email" autoComplete="email" required />
       </label>
-      <button className="btn" type="submit">
+      <button className="btn full" type="submit">
         Continue to payment
       </button>
       <p className="fine">

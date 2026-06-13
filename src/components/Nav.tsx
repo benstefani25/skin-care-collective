@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { config } from "@/config/app";
+import { Wordmark } from "@/components/Wordmark";
 
 export function Nav({ active }: { active: "book" | "account" }) {
   return (
     <header className="nav">
-      <span className="brand">{config.brandName}</span>
+      <Link href="/book" style={{ textDecoration: "none" }}>
+        <Wordmark size={18} />
+      </Link>
       <nav>
         <Link href="/book" className={active === "book" ? "on" : ""}>
           Book

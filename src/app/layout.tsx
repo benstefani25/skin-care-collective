@@ -1,6 +1,24 @@
 import type { Metadata } from "next";
+import { Fraunces, Figtree } from "next/font/google";
 import "./globals.css";
 import { config } from "@/config/app";
+
+// Display serif with warmth + character; clean humanist sans for body.
+// next/font self-hosts and size-adjusts, which kills the font-swap layout
+// shift that makes deployed sites feel janky.
+const display = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
+  display: "swap",
+});
+const sans = Figtree({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: config.brandName,
@@ -9,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body>
         <main>{children}</main>
       </body>
