@@ -1,6 +1,8 @@
 import { copy } from "@/config/copy";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { verifyToken } from "@/lib/links";
+import { getStripe } from "@/lib/stripe";
+import { logEvent } from "@/lib/events";
 import { savePreferences } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -21,13 +23,39 @@ export default async function PreferencesPage({
     );
   }
 
-  const { data: member } = await supabaseAdmin()
+  const db = supabaseAdmin();
+  const { data: member } = await db
     .from("members")
-    .select("first_name, shade_preference, standing_appointment, standing_window")
+    .select("id, status, first_name, shade_preference, standing_appointment, standing_window")
     .eq("id", payload.id)
     .maybeSingle();
   if (!member) {
     return <p className="muted">Something went wrong — text us and we&apos;ll sort it out.</p>;
+  }
+
+  // Activation fallback: confirm payment directly with Stripe on the success
+  // redirect. Idempotent with the checkout.session.completed webhook, and
+  // covers local dev where webhooks can't reach the server.
+  if (member.status === "pending" && sp.session_id) {
+    try {
+      const session = await getStripe().checkout.sessions.retrieve(sp.session_id);
+      if (session.payment_status === "paid" && session.metadata?.member_id === member.id) {
+        const update: Record<string, unknown> = { status: "active" };
+        if (typeof session.customer === "string") update.stripe_customer_id = session.customer;
+        if (typeof session.subscription === "string") {
+          update.stripe_subscription_id = session.subscription;
+        }
+        await db.from("members").update(update).eq("id", member.id);
+        await logEvent({
+          type: "member.activated",
+          actor_type: "system",
+          member_id: member.id,
+          payload: { checkout_session: session.id, via: "success_redirect" },
+        });
+      }
+    } catch (err) {
+      console.error("[signup] checkout session verification failed:", err);
+    }
   }
 
   return (

@@ -76,7 +76,7 @@ export async function startSignup(formData: FormData) {
         },
       },
     ],
-    success_url: `${config.appBaseUrl}/signup/preferences?t=${memberToken(memberId)}`,
+    success_url: `${config.appBaseUrl}/signup/preferences?t=${memberToken(memberId)}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${config.appBaseUrl}/signup?error=cancelled`,
     metadata: { member_id: memberId },
     subscription_data: { metadata: { member_id: memberId } },
