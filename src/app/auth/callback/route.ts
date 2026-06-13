@@ -16,10 +16,15 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${config.appBaseUrl}/login?error=invalid_link`);
   }
 
+  // Founder first — it's a single configured email, no row to link.
+  const email = data.user.email?.toLowerCase();
+  if (email && config.founderEmail && email === config.founderEmail) {
+    return NextResponse.redirect(`${config.appBaseUrl}/founder`);
+  }
+
   // First login: attach the auth user to her member or tech row by email,
   // then route to the right surface.
   const db = supabaseAdmin();
-  const email = data.user.email?.toLowerCase();
   if (email) {
     await db
       .from("members")

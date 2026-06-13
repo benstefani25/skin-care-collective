@@ -1,6 +1,8 @@
-# Skin Care Collective — Milestones 1–3
+# Skin Care Collective — Milestones 1–4
 
-Recurring spray-tan membership platform for sorority houses. This repo implements **M1 (core + signup + booking)**, **M2 (tech app + the wall)**, and **M3 (concierge)** from `docs/SPEC.md`.
+Recurring spray-tan membership platform for sorority houses. This repo implements **M1 (core + signup + booking)**, **M2 (tech app + the wall)**, **M3 (concierge)**, and **M4 (founder console + QC digest)** from `docs/SPEC.md`.
+
+**M4 exit test:** the founder runs the business from `/founder` — an exceptions feed (escalations, failed payments, under-booked visits, low ratings, late techs), house CRM with health metrics, searchable members/techs with edit, a visits calendar (create / reassign / cancel-with-notify), payroll with CSV export, and a weekly AI digest (Healthy / Watch / Act + drafted director check-ins, never auto-sent). Login is the `FOUNDER_EMAIL` magic link; generate a digest on demand from the Digest tab.
 
 **M3 exit test:** members text the brand number and an AI front desk (Claude with tool use) books, reschedules, cancels, toggles auto-booking, sends the billing portal link, forwards day-of notes to the tech, and escalates anything medical/complaint/refund to the owner — never touching money or another member's data. Test locally without Twilio: `npm run sms -- "+15550101000" "what times are open this week?"`.
 

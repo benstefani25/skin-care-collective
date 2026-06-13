@@ -10,6 +10,11 @@ export const config = {
   get timezone() {
     return process.env.APP_TIMEZONE ?? "America/Chicago";
   },
+  // Founder console is one user (spec §7); gate on this email. Multi-founder
+  // roles are explicitly out of scope (§14).
+  get founderEmail() {
+    return (process.env.FOUNDER_EMAIL ?? "").toLowerCase();
+  },
 
   // Booking engine (spec §4)
   slotGenerationWeeksAhead: 3,

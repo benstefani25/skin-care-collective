@@ -76,6 +76,26 @@ input.short { width: 90px; }
 
 .nav { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; }
 .nav .brand { font-weight: 700; }
-.nav nav { display: flex; gap: 14px; }
+.nav nav { display: flex; gap: 14px; flex-wrap: wrap; }
 .nav a { color: var(--muted); text-decoration: none; font-weight: 600; }
 .nav a.on { color: var(--ink); border-bottom: 2px solid var(--accent); }
+.founder-nav { flex-direction: column; align-items: flex-start; gap: 8px; }
+.founder-nav nav { font-size: 0.9rem; }
+
+/* Founder console: wider canvas, tables, pills, exception cards */
+body:has(.founder-nav) main { max-width: 760px; }
+.pill { background: var(--line); color: var(--ink); border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; }
+.pill.warn { background: #f7e5e4; color: var(--danger); }
+.metrics { gap: 16px; margin-top: 8px; font-size: 0.9rem; color: var(--muted); }
+.metrics strong { color: var(--ink); }
+.exc { border-left: 4px solid var(--line); }
+.exc-act { border-left-color: var(--danger); }
+.exc-watch { border-left-color: var(--accent); }
+table.data { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+table.data th { text-align: left; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+table.data td { padding: 8px; border-bottom: 1px solid var(--line); }
+table.data a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.digest h2 { margin-top: 12px; }
+.digest h3 { margin: 14px 0 4px; }
+.digest blockquote { margin: 4px 0; padding: 8px 12px; background: var(--bg); border-left: 3px solid var(--accent); border-radius: 0; }
+.digest .li { margin: 2px 0; }
