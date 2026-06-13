@@ -91,6 +91,28 @@ async function main() {
     if (error) throw new Error(`member insert failed: ${error.message}`);
   }
 
+  // SOP corpus for the tech copilot (spec §11b / M5).
+  const sops: Array<[string, string, string]> = [
+    [
+      "Streaky or uneven results",
+      "Streaking almost always traces to prep or application distance. Confirm the client exfoliated and skipped lotion/deodorant. Hold the gun 6–8 inches from the skin, keep it moving in smooth horizontal passes, and overlap each pass by ~50%. Do two light coats rather than one heavy one. Feather the edges at wrists, ankles, knees, and elbows where solution pools. If the solution looks watery, check the dilution before the next client.",
+      "technique",
+    ],
+    [
+      "Equipment: gun won't spray evenly",
+      "A spitting or sputtering gun is usually a clogged nozzle or low air pressure. Power down, remove and rinse the nozzle in warm water, and clear it with the cleaning pin. Confirm the air pressure is set to 8–10 PSI for our solution. Wipe the needle after every few clients. If it still sputters after cleaning, swap to the backup gun and flag it so the owner can service the unit.",
+      "equipment",
+    ],
+    [
+      "Client prep and aftercare",
+      "Before: client should shower and exfoliate, no lotion, deodorant, makeup, or perfume. Have her wear loose, dark clothing and remove jewelry. After: no water, sweat, or tight clothing for 8 hours, then rinse in lukewarm water (no soap on the first rinse). Moisturize daily to extend the tan. Results develop over 4–8 hours.",
+      "process",
+    ],
+  ];
+  for (const [title, body, category] of sops) {
+    await db.from("sop_documents").insert({ title, body, category, version: 1, active: true });
+  }
+
   console.log("Generating visits, slots, and standing appointments…");
   const summary = await generateVisitsAndSlots();
   console.log(JSON.stringify(summary, null, 2));

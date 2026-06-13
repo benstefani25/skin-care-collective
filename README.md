@@ -1,6 +1,8 @@
-# Skin Care Collective — Milestones 1–4
+# Skin Care Collective — Milestones 1–5 (complete)
 
-Recurring spray-tan membership platform for sorority houses. This repo implements **M1 (core + signup + booking)**, **M2 (tech app + the wall)**, **M3 (concierge)**, and **M4 (founder console + QC digest)** from `docs/SPEC.md`.
+Recurring spray-tan membership platform for sorority houses. This repo implements all five milestones from `docs/SPEC.md`: **M1 (core + signup + booking)**, **M2 (tech app + the wall)**, **M3 (concierge)**, **M4 (founder console + QC digest)**, and **M5 (tech copilot)**.
+
+**M5 exit test:** a tech opens the Copilot tab and asks job questions; the assistant answers only from the uploaded SOPs (e.g. the exact gun PSI), refuses to improvise on anything outside them, and escalates anything medical — every question logged so the founder can see where the SOPs need filling in.
 
 **M4 exit test:** the founder runs the business from `/founder` — an exceptions feed (escalations, failed payments, under-booked visits, low ratings, late techs), house CRM with health metrics, searchable members/techs with edit, a visits calendar (create / reassign / cancel-with-notify), payroll with CSV export, and a weekly AI digest (Healthy / Watch / Act + drafted director check-ins, never auto-sent). Login is the `FOUNDER_EMAIL` magic link; generate a digest on demand from the Digest tab.
 
