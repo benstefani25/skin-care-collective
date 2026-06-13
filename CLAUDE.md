@@ -11,7 +11,8 @@ Also: every meaningful state change writes to the append-only `events` table (th
 
 ## Status
 - **M1 (done):** schema + RLS, slot generation + standing placement, Stripe Checkout signup, member book/cancel/reschedule, one-tap SMS links, reminders, Stripe webhooks, seed.
-- **M2–M5 (not built):** tech app, concierge agent, founder console, copilot. See spec §13.
+- **M2 (done):** tech run sheet (reads `tech_runsheet` view via the tech's own session — never base tables), visit + appointment check-in/complete/no-show, missed-you SMS, deferred bonus accrual with semester escalator, earnings screen, biweekly payroll CSV with minimum-wage true-up (`npm run payroll`). Wall verified: tech JWT gets today's view rows only, `[]` from every base table.
+- **M3–M5 (not built):** concierge agent, founder console + QC digest, copilot. See spec §13.
 - Spec §14 lists explicit non-goals — do not build them.
 
 ## Layout

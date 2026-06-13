@@ -1,8 +1,10 @@
-# Skin Care Collective — Milestone 1
+# Skin Care Collective — Milestones 1–2
 
-Recurring spray-tan membership platform for sorority houses. This repo implements **M1: Core + signup + booking (single pilot house)** from `docs/SPEC.md`.
+Recurring spray-tan membership platform for sorority houses. This repo implements **M1 (core + signup + booking)** and **M2 (tech app + the wall)** from `docs/SPEC.md`.
 
 **M1 exit test:** a member can sign up, pay, get auto-booked via standing appointment, reschedule herself, and receive reminders — with zero founder involvement.
+
+**M2 exit test:** a tech can run a full visit day from her phone (`/tech`: visit check-in/out, per-appointment check-in/complete/no-show, earnings at `/tech/earnings`), and tech-facing reads go through the `tech_runsheet` view under her own RLS session — no member contact info anywhere in the responses. Completing a tan accrues the deferred bonus (escalator $2.50 → $5.00 → $7.50 by semester); `npm run payroll` emits the biweekly CSV with the minimum-wage true-up.
 
 ## What's here
 

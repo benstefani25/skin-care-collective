@@ -25,6 +25,11 @@ export const config = {
   deferredRateBaseCents: 250, // $2.50, +$2.50 per retained semester…
   deferredRateCapCents: 750, // …capped at $7.50 unless founder overrides
   travelSetupAllowanceMinutes: 60, // wage-floor true-up hours allowance
+  defaultMinimumWageCents: 1500, // per-hour floor when a house has no override (FOUNDER DECISION — jurisdiction-specific)
+  payPeriodAnchor: "2026-01-05", // a Monday; biweekly periods count from here
+  currentSemester: "F26", // FOUNDER DECISION — semester dates per campus
+  semesterEndDate: "2026-12-18", // F26 payout date
+  techDayStartHour: 6, // run sheet unlocks at 6:00 AM local on visit days
 
   // Payments (spec §9)
   pastDueGraceAppointments: 1, // FOUNDER DECISION — honor 1 booked appt
