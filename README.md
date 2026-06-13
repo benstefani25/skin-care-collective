@@ -1,6 +1,8 @@
-# Skin Care Collective — Milestones 1–2
+# Skin Care Collective — Milestones 1–3
 
-Recurring spray-tan membership platform for sorority houses. This repo implements **M1 (core + signup + booking)** and **M2 (tech app + the wall)** from `docs/SPEC.md`.
+Recurring spray-tan membership platform for sorority houses. This repo implements **M1 (core + signup + booking)**, **M2 (tech app + the wall)**, and **M3 (concierge)** from `docs/SPEC.md`.
+
+**M3 exit test:** members text the brand number and an AI front desk (Claude with tool use) books, reschedules, cancels, toggles auto-booking, sends the billing portal link, forwards day-of notes to the tech, and escalates anything medical/complaint/refund to the owner — never touching money or another member's data. Test locally without Twilio: `npm run sms -- "+15550101000" "what times are open this week?"`.
 
 **M1 exit test:** a member can sign up, pay, get auto-booked via standing appointment, reschedule herself, and receive reminders — with zero founder involvement.
 

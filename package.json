@@ -10,9 +10,11 @@
     "seed": "tsx scripts/seed.ts",
     "generate-slots": "tsx scripts/generate-slots.ts",
     "payroll": "tsx scripts/payroll.ts",
-    "demo-visit-today": "tsx scripts/demo-visit-today.ts"
+    "demo-visit-today": "tsx scripts/demo-visit-today.ts",
+    "sms": "tsx scripts/simulate-sms.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.47.10",
     "next": "^15.3.0",

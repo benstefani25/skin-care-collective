@@ -12,7 +12,13 @@ Also: every meaningful state change writes to the append-only `events` table (th
 ## Status
 - **M1 (done):** schema + RLS, slot generation + standing placement, Stripe Checkout signup, member book/cancel/reschedule, one-tap SMS links, reminders, Stripe webhooks, seed.
 - **M2 (done):** tech run sheet (reads `tech_runsheet` view via the tech's own session — never base tables), visit + appointment check-in/complete/no-show, missed-you SMS, deferred bonus accrual with semester escalator, earnings screen, biweekly payroll CSV with minimum-wage true-up (`npm run payroll`). Wall verified: tech JWT gets today's view rows only, `[]` from every base table.
-- **M3–M5 (not built):** concierge agent, founder console + QC digest, copilot. See spec §13.
+- **M3 (done):** member concierge (spec §11a) — inbound SMS → Claude (`claude-opus-4-8`) with tool use → SMS reply. Tools bound server-side to the texting member (book/reschedule/cancel/toggle-standing/portal-link/forward-to-tech/escalate); no money tools exist. Medical/complaint/refund → escalate; pause/card/cancel → portal link. Tech relay inbox at `/tech/messages`. Inbound webhook at `/api/webhooks/twilio` (signature-validated in prod). Test harness: `npm run sms -- "+1..." "text"`. 10-scenario exit test passed incl. medical escalation.
+- **M4–M5 (not built):** founder console + QC digest, copilot. See spec §13.
+
+## AI agents
+- System prompts are versioned config in `src/config/prompts.ts` (never inline). Bump `CONCIERGE_PROMPT_VERSION` on changes — it's stamped into events.
+- Every agent tool call writes a `concierge.tool_used` event; escalations write `message.escalated` with `escalated=true` on the message. AI never writes `bonus_ledger` or moves money.
+- `ANTHROPIC_API_KEY` required for the concierge; `FOUNDER_PHONE` (optional) gets escalation texts.
 - Spec §14 lists explicit non-goals — do not build them.
 
 ## Layout
