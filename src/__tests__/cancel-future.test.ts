@@ -27,9 +27,10 @@ beforeAll(async () => {
     .select()
     .single();
   ids.houseId = house!.id;
+  const phone = `+1555${3000000 + Math.floor(Math.random() * 6000000)}`;
   const { data: member } = await db
     .from("members")
-    .insert({ house_id: ids.houseId, first_name: "Faye", last_name: "Future", phone: "+15553330001", email: "faye@example.com", status: "active" })
+    .insert({ house_id: ids.houseId, first_name: "Faye", last_name: "Future", phone, email: `faye-${TAG}@example.com`, status: "active" })
     .select()
     .single();
   ids.memberId = member!.id;
@@ -64,10 +65,8 @@ afterAll(async () => {
     await db.from("slots").delete().eq("id", id);
     if (s) await db.from("visits").delete().eq("id", s.visit_id);
   }
-  if (ids.memberId) {
-    await db.from("events").delete().eq("member_id", ids.memberId);
-    await db.from("members").delete().eq("id", ids.memberId);
-  }
+  // events are append-only; deleting the member nulls their event refs (0006).
+  if (ids.memberId) await db.from("members").delete().eq("id", ids.memberId);
   if (ids.houseId) await db.from("houses").delete().eq("id", ids.houseId);
 });
 

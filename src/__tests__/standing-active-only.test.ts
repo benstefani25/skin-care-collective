@@ -52,10 +52,8 @@ afterAll(async () => {
   await db.from("appointments").delete().in("slot_id", ids.slotIds);
   for (const id of ids.slotIds) await db.from("slots").delete().eq("id", id);
   if (ids.visitId) await db.from("visits").delete().eq("id", ids.visitId);
-  for (const id of ids.memberIds) {
-    await db.from("events").delete().eq("member_id", id);
-    await db.from("members").delete().eq("id", id);
-  }
+  // events are append-only; deleting the member nulls their event refs (0006).
+  for (const id of ids.memberIds) await db.from("members").delete().eq("id", id);
   if (ids.houseId) await db.from("houses").delete().eq("id", ids.houseId);
 });
 

@@ -61,9 +61,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  // events are append-only; deleting the member nulls their event refs (0006).
   if (ids.memberId) {
     await db.from("messages").delete().eq("member_id", ids.memberId);
-    await db.from("events").delete().eq("member_id", ids.memberId);
     await db.from("members").delete().eq("id", ids.memberId);
   }
   if (ids.houseId) await db.from("houses").delete().eq("id", ids.houseId);
