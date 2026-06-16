@@ -11,7 +11,8 @@
     "generate-slots": "tsx scripts/generate-slots.ts",
     "payroll": "tsx scripts/payroll.ts",
     "demo-visit-today": "tsx scripts/demo-visit-today.ts",
-    "sms": "tsx scripts/simulate-sms.ts"
+    "sms": "tsx scripts/simulate-sms.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",
@@ -30,6 +31,7 @@
     "dotenv": "^16.4.7",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vercel": "^54.13.0"
+    "vercel": "^54.13.0",
+    "vitest": "^4.1.9"
   }
 }
