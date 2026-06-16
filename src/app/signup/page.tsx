@@ -1,3 +1,4 @@
+import { config } from "@/config/app";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Wordmark } from "@/components/Wordmark";
 import { startSignup } from "./actions";
@@ -60,12 +61,34 @@ export default async function SignupPage({
         Email
         <input name="email" type="email" autoComplete="email" required />
       </label>
+
+      <fieldset className="cadence">
+        <legend>How would you like to pay?</legend>
+        <label className="cadence-opt">
+          <input type="radio" name="cadence" value="monthly" defaultChecked />
+          <span>
+            <strong>Monthly</strong>
+            <span className="muted"> — billed every month, cancel anytime</span>
+          </span>
+        </label>
+        <label className="cadence-opt">
+          <input type="radio" name="cadence" value="semester" />
+          <span>
+            <strong>Semester</strong>
+            <span className="muted">
+              {" "}— prepay {config.semesterIntervalMonths} months at once
+              {config.semesterPrepayDiscountPct > 0 ? ` and save ${config.semesterPrepayDiscountPct}%` : ""}
+            </span>
+          </span>
+        </label>
+      </fieldset>
+
       <button className="btn full" type="submit">
         Continue to payment
       </button>
       <p className="fine">
-        Flat monthly membership, card on file — never pay at an appointment. Pause or cancel
-        anytime from your account.
+        Card on file — never pay at an appointment. Your exact total is shown on the secure
+        checkout page. Pause or cancel anytime from your account.
       </p>
     </form>
   );

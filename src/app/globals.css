@@ -181,6 +181,13 @@ input.short { width: 96px; min-width: 96px; }
 
 .divider { height: 1px; background: var(--line); border: 0; margin: 6px 0; }
 
+/* Cadence chooser (signup) */
+fieldset.cadence { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+fieldset.cadence legend { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; padding: 0; }
+.cadence-opt { display: flex; align-items: flex-start; gap: 10px; border: 1.5px solid var(--line-strong); border-radius: var(--radius); padding: 14px; cursor: pointer; font-weight: 400; transition: border-color 0.15s var(--ease), background 0.15s var(--ease); }
+.cadence-opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.cadence-opt input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
+
 /* Skeleton loaders — keep transitions from feeling broken */
 .skeleton { background: linear-gradient(90deg, var(--bg-warm) 25%, #efe4d6 50%, var(--bg-warm) 75%); background-size: 200% 100%; animation: shimmer 1.3s infinite; border-radius: 8px; }
 .sk-line { height: 14px; margin: 8px 0; }

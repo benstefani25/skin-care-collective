@@ -36,7 +36,7 @@ async function main() {
       visit_window_start: "17:00",
       visit_window_end: "21:00",
       slot_duration_minutes: 20,
-      monthly_price_cents: 6500,
+      monthly_price_cents: 8900,
       status: "active",
     })
     .select()

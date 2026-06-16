@@ -23,7 +23,13 @@ export const config = {
 
   // Defaults applied to new houses (each house can override in its row)
   defaultSlotDurationMinutes: 20, // FOUNDER DECISION
-  defaultMonthlyPriceCents: 6500, // FOUNDER DECISION
+  defaultMonthlyPriceCents: 8900, // FOUNDER DECISION — $89/mo (confirmed 2026-06)
+
+  // Semester-prepay is a CADENCE choice, not a tier (T1-1). The semester amount
+  // is derived from each house's own monthly price (per-house pricing is the
+  // founder's lever) × the interval, with an optional prepay discount.
+  semesterIntervalMonths: 4, // FOUNDER DECISION — billing interval for a prepaid semester
+  semesterPrepayDiscountPct: 0, // FOUNDER DECISION — e.g. 10 = 10% off vs. paying monthly
 
   // Pay (DECIDED per spec §15)
   baseRateCents: 1000,
