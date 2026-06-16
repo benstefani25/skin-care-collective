@@ -82,3 +82,9 @@ M2 (tech app + the wall), M3 (concierge), M4 (founder console + QC digest), M5 (
   - `TWILIO_AUTH_TOKEN` (when Twilio is connected)
   - After rotating the Stripe key, also recreate the webhook signing secret if needed. Claude Code cannot rotate these for you.
 - `.gitignore` covers `.env*`; only `.env.example` (no real values) is tracked.
+
+## Pricing & tax (founder decisions)
+
+- **Price:** $89/mo default (`config.defaultMonthlyPriceCents`), or prepay a 4-month semester. Each house can override `monthly_price_cents` (e.g. a lower founding-house rate). Semester amount derives from the house's monthly price × `semesterIntervalMonths`, minus `semesterPrepayDiscountPct` (default 0).
+- **🔴 Processing fees — do NOT surcharge.** Passing Stripe fees to members erodes trust and is operationally messy. Bake them into the headline price. (No code path; this is a standing decision.)
+- **🔴 HUMAN TASK — sales tax.** Tanning-*service* taxability varies by state, and there's a federal **10% excise on indoor tanning** (applies to UV tanning; spray/DHA is generally exempt — **confirm per campus state**). To enable: (1) in the Stripe dashboard, activate **Stripe Tax**, set a default product tax category, and add a **registration for each campus state**; (2) set `config.enableStripeTax = true`. Until both are done the flag stays `false` and checkout runs untaxed. Stripe computes the tax; the founder must confirm registration obligations with an accountant.

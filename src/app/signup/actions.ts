@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 import { config } from "@/config/app";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
@@ -68,6 +69,17 @@ export async function startSignup(formData: FormData) {
   // subscription, derived from the house's own monthly price). Both reuse the
   // existing subscription machinery — portal, pause, cancel, dunning all work.
   const billing = cadenceCheckout(cadence, house.monthly_price_cents);
+  // Sales tax (T1-2): when enabled, let Stripe compute tax and collect the
+  // address it needs. Gated so checkout never breaks before Stripe Tax is set
+  // up in the dashboard. Processing fees are baked into the price, never
+  // surcharged.
+  const tax: Stripe.Checkout.SessionCreateParams = config.enableStripeTax
+    ? {
+        automatic_tax: { enabled: true },
+        billing_address_collection: "required",
+        customer_update: { address: "auto" },
+      }
+    : {};
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customer.id,
@@ -78,6 +90,7 @@ export async function startSignup(formData: FormData) {
           currency: "usd",
           unit_amount: billing.unit_amount,
           recurring: { interval: billing.interval, interval_count: billing.interval_count },
+          ...(config.enableStripeTax ? { tax_behavior: "exclusive" as const } : {}),
           product_data: { name: `${config.brandName} membership — ${house.name} (${billing.label})` },
         },
       },
@@ -86,6 +99,7 @@ export async function startSignup(formData: FormData) {
     cancel_url: `${config.appBaseUrl}/signup?error=cancelled`,
     metadata: { member_id: memberId },
     subscription_data: { metadata: { member_id: memberId, cadence } },
+    ...tax,
   });
 
   await logEvent({

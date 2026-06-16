@@ -44,4 +44,11 @@ export const config = {
 
   // Payments (spec §9)
   pastDueGraceAppointments: 1, // FOUNDER DECISION — honor 1 booked appt
+
+  // Sales tax (T1-2). Leave FALSE until Stripe Tax is activated in the Stripe
+  // dashboard (set a default tax code/category + add a registration for each
+  // campus state). Flipping this on before that is configured makes checkout
+  // error. When true, checkout collects a billing address and lets Stripe
+  // compute tax. Never surcharge processing fees — bake them into the price.
+  enableStripeTax: false, // FOUNDER DECISION
 };
