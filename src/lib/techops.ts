@@ -203,3 +203,51 @@ export async function noShowAppointment(appointmentId: string, techId: string): 
 
   return { ok: true };
 }
+
+// "Running late" broadcast (T1-8): text today's still-booked members that the
+// tech is behind. Phones are fetched and used SERVER-SIDE only — the tech never
+// sees a number (the wall holds). Returns how many were notified.
+export async function broadcastRunningLate(
+  techId: string,
+  minutes: number
+): Promise<TechResult & { sent?: number }> {
+  const db = supabaseAdmin();
+  const visit = await ownedTodayVisitByDate(techId);
+  if (!visit) return { ok: false, error: "not_your_visit" };
+
+  const { data: appts } = await db
+    .from("appointments")
+    .select("member:members(phone), slot:slots!inner(visit_id)")
+    .eq("slot.visit_id", visit.id)
+    .eq("status", "booked");
+
+  let sent = 0;
+  for (const a of (appts ?? []) as any[]) {
+    const phone = a.member?.phone;
+    if (phone) {
+      await sendSms(phone, copy.smsRunningLate(minutes));
+      sent++;
+    }
+  }
+
+  await logEvent({
+    type: "visit.running_late_broadcast",
+    actor_type: "tech",
+    actor_id: techId,
+    tech_id: techId,
+    house_id: visit.house_id,
+    payload: { visit_id: visit.id, minutes, notified: sent },
+  });
+  return { ok: true, sent };
+}
+
+async function ownedTodayVisitByDate(techId: string) {
+  const { data } = await supabaseAdmin()
+    .from("visits")
+    .select("id, house_id")
+    .eq("tech_id", techId)
+    .eq("date", todayISO())
+    .in("status", ["scheduled", "under_threshold", "in_progress"])
+    .maybeSingle();
+  return data;
+}

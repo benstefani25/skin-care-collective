@@ -12,9 +12,11 @@ import {
   apptCheckInAction,
   apptCompleteAction,
   apptNoShowAction,
+  runningLateAction,
   visitCheckInAction,
   visitCheckOutAction,
 } from "./actions";
+import { EndVisitButton } from "./EndVisitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -71,11 +73,21 @@ export default async function TechToday({
 
   const house = visit.house as unknown as { name: string; address: string; access_notes: string } | null;
 
+  // Completion counter + guard (T1-8): un-actioned = still 'booked'.
+  const rows = (runsheet ?? []) as Array<{ status: string }>;
+  const totalCount = rows.length;
+  const doneCount = rows.filter((r) => r.status === "completed" || r.status === "no_show").length;
+  const unfinishedCount = rows.filter((r) => r.status === "booked").length;
+
   return (
     <div className="stack">
       <TechNav active="today" />
       {sp.error && <p className="banner error">{ERRORS[sp.error] ?? "Something went wrong."}</p>}
-      {sp.ok && <p className="banner ok">Done!</p>}
+      {sp.ok && (
+        <p className="banner ok">
+          {sp.ok === "late_sent" ? "Sent — today's members know you're running a bit behind." : "Done!"}
+        </p>
+      )}
 
       <section className="card">
         <h1>
@@ -95,12 +107,14 @@ export default async function TechToday({
               </button>
             </form>
           ) : !visit.checked_out_at ? (
-            <form action={visitCheckOutAction}>
-              <input type="hidden" name="visit_id" value={visit.id} />
-              <button className="btn secondary" type="submit">
-                End visit
-              </button>
-            </form>
+            <>
+              <EndVisitButton action={visitCheckOutAction} visitId={visit.id} unfinished={unfinishedCount} />
+              <form action={runningLateAction}>
+                <button className="btn small danger" type="submit">
+                  Running ~{config.techLateDefaultMinutes} min late
+                </button>
+              </form>
+            </>
           ) : (
             <p className="banner ok">Visit complete — nice work!</p>
           )}
@@ -108,7 +122,12 @@ export default async function TechToday({
       </section>
 
       <section>
-        <h2>Run sheet</h2>
+        <div className="row" style={{ justifyContent: "space-between" }}>
+          <h2 style={{ margin: 0 }}>Run sheet</h2>
+          {totalCount > 0 && (
+            <span className="pill">{doneCount} of {totalCount} done</span>
+          )}
+        </div>
         {(runsheet ?? []).length === 0 && <p className="muted">No appointments booked yet.</p>}
         {(runsheet ?? []).map((a: any) => (
           <div className="card" key={a.appointment_id}>

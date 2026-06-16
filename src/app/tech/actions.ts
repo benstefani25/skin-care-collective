@@ -1,8 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { config } from "@/config/app";
 import { requireTech } from "@/lib/auth";
 import {
+  broadcastRunningLate,
   checkInAppointment,
   checkInVisit,
   checkOutVisit,
@@ -41,4 +43,10 @@ export async function apptNoShowAction(formData: FormData) {
   const tech = await requireTech();
   const result = await noShowAppointment(String(formData.get("appointment_id") ?? ""), tech.id);
   redirect(result.ok ? "/tech?ok=1" : `/tech?error=${result.error}`);
+}
+
+export async function runningLateAction() {
+  const tech = await requireTech();
+  const result = await broadcastRunningLate(tech.id, config.techLateDefaultMinutes);
+  redirect(result.ok ? "/tech?ok=late_sent" : `/tech?error=${result.error}`);
 }

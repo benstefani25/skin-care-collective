@@ -18,6 +18,10 @@ export const copy = {
   smsMissedYou: (link: string) =>
     `We missed you today! Want to grab a spot at the next visit? ${link} — ${config.brandName}`,
 
+  smsRunningLate: (minutes: number) =>
+    `Quick heads up from ${config.brandName}: your tech is running about ${minutes} minutes behind ` +
+    `today. Same spot, just a little later — thanks for your patience!`,
+
   smsPaymentFailed: (link: string) =>
     `Hi! Your ${config.brandName} membership payment didn't go through — usually just an expired card. ` +
     `Update it in a minute here: ${link}`,

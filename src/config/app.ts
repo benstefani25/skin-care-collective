@@ -41,6 +41,7 @@ export const config = {
   currentSemester: "F26", // FOUNDER DECISION — semester dates per campus
   semesterEndDate: "2026-12-18", // F26 payout date
   techDayStartHour: 6, // run sheet unlocks at 6:00 AM local on visit days
+  techLateDefaultMinutes: 15, // FOUNDER DECISION — default delay for the "running late" broadcast
 
   // Payments (spec §9)
   pastDueGraceAppointments: 1, // FOUNDER DECISION — honor 1 booked appt
