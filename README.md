@@ -70,3 +70,15 @@ Two endpoints, secured with `Authorization: Bearer $CRON_SECRET`:
 ## Next milestones
 
 M2 (tech app + the wall), M3 (concierge), M4 (founder console + QC digest), M5 (copilot) — see `docs/SPEC.md` §13. The schema for all of them is already in place.
+
+## Security & secrets
+
+- **Service-role key is server-only.** `src/lib/supabase/admin.ts` (which reads `SUPABASE_SERVICE_ROLE_KEY`) is imported exclusively by Server Components, server actions, route handlers, and server libs — never a `"use client"` component. It bypasses RLS; it must never reach the browser. The tech wall is additionally enforced at the DB layer (see `0005_runsheet_security_invoker.sql`).
+- **🔴 HUMAN TASK — rotate any secret that has left a secure environment.** `.env.local` was shipped in a zip during development, so the following must be rotated at their providers before real member data is handled, then updated in Vercel env + local `.env.local`:
+  - `STRIPE_SECRET_KEY` (Stripe dashboard → Developers → API keys → roll)
+  - `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Project Settings → API → reset)
+  - `ANTHROPIC_API_KEY` (console.anthropic.com → API keys → rotate)
+  - `CRON_SECRET`, `LINK_SECRET` (regenerate: `openssl rand -hex 24`)
+  - `TWILIO_AUTH_TOKEN` (when Twilio is connected)
+  - After rotating the Stripe key, also recreate the webhook signing secret if needed. Claude Code cannot rotate these for you.
+- `.gitignore` covers `.env*`; only `.env.example` (no real values) is tracked.
