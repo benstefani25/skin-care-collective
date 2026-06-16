@@ -428,6 +428,11 @@ export async function handleInboundSms(fromPhone: string, body: string): Promise
     });
   }
 
+  // T0-6 [A4]: once escalated, NEVER send the model's free text — it may
+  // contain improvised (e.g. medical) advice. Override with a fixed, safe
+  // hand-off so the member only ever gets the canned reply.
+  if (state.escalated) reply = copy.smsEscalationHandoff();
+
   await sendSms(member.phone, reply);
   await db.from("messages").insert({
     member_id: member.id,
