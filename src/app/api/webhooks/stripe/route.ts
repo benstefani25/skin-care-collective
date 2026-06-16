@@ -5,6 +5,7 @@ import { getStripe } from "@/lib/stripe";
 import { logEvent } from "@/lib/events";
 import { sendSms } from "@/lib/twilio";
 import { billingLink } from "@/lib/links";
+import { cancelFutureAppointmentsForMember } from "@/lib/booking";
 import { copy } from "@/config/copy";
 
 export async function POST(req: Request) {
@@ -101,6 +102,14 @@ export async function POST(req: Request) {
             member_id: member.id,
             house_id: member.house_id,
           });
+          // Pause semantics: a paused member isn't being charged, so she should
+          // not hold future slots. Release them now; normal slot generation
+          // re-books her standing appointment next cycle once she resumes.
+          await cancelFutureAppointmentsForMember({
+            memberId: member.id,
+            actor: { type: "system" },
+            reason: "membership_paused",
+          });
         } else if (!sub.pause_collection && member.status === "paused") {
           await db.from("members").update({ status: "active" }).eq("id", member.id);
           await logEvent({
@@ -124,6 +133,13 @@ export async function POST(req: Request) {
           actor_type: "system",
           member_id: member.id,
           house_id: member.house_id,
+        });
+        // Release any future booked appointments so they don't linger as
+        // phantom bookings on tech run sheets.
+        await cancelFutureAppointmentsForMember({
+          memberId: member.id,
+          actor: { type: "system" },
+          reason: "membership_ended",
         });
       }
       break;
