@@ -1,8 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import type Stripe from "stripe";
 import { config } from "@/config/app";
+import { rateLimit } from "@/lib/ratelimit";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { logEvent } from "@/lib/events";
@@ -21,6 +23,13 @@ export async function startSignup(formData: FormData) {
     redirect("/signup?error=invalid");
   }
 
+  // Throttle signup per IP — each attempt can mint a Stripe customer.
+  const hdrs = await headers();
+  const ip = (hdrs.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+  if (!rateLimit(`signup:${ip}`, config.signupMaxPerWindow, config.signupWindowMs)) {
+    redirect("/signup?error=rate_limited");
+  }
+
   const db = supabaseAdmin();
   const { data: house } = await db
     .from("houses")
@@ -34,7 +43,7 @@ export async function startSignup(formData: FormData) {
   // the existing row; an active/paused/past_due member is sent to login.
   const { data: existing } = await db
     .from("members")
-    .select("id, status")
+    .select("id, status, stripe_customer_id")
     .eq("phone", phone)
     .maybeSingle();
   if (existing && existing.status !== "pending" && existing.status !== "cancelled") {
@@ -57,13 +66,21 @@ export async function startSignup(formData: FormData) {
   }
 
   const stripe = getStripe();
-  const customer = await stripe.customers.create({
-    name: `${firstName} ${lastName}`,
-    email,
-    phone,
-    metadata: { member_id: memberId },
-  });
-  await db.from("members").update({ stripe_customer_id: customer.id }).eq("id", memberId);
+  // Reuse a Stripe customer if this pending/cancelled member already has one
+  // (abandoned-then-retried signup) — don't orphan a fresh customer each try.
+  let customerId = existing?.stripe_customer_id ?? null;
+  if (customerId) {
+    await stripe.customers.update(customerId, { name: `${firstName} ${lastName}`, email, phone });
+  } else {
+    const customer = await stripe.customers.create({
+      name: `${firstName} ${lastName}`,
+      email,
+      phone,
+      metadata: { member_id: memberId },
+    });
+    customerId = customer.id;
+    await db.from("members").update({ stripe_customer_id: customerId }).eq("id", memberId);
+  }
 
   // Cadence: monthly recurring, or a prepaid semester (a 4-month-interval
   // subscription, derived from the house's own monthly price). Both reuse the
@@ -82,7 +99,7 @@ export async function startSignup(formData: FormData) {
     : {};
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
-    customer: customer.id,
+    customer: customerId,
     line_items: [
       {
         quantity: 1,

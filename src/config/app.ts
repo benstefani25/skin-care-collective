@@ -51,4 +51,10 @@ export const config = {
   // error. When true, checkout collects a billing address and lets Stripe
   // compute tax. Never surcharge processing fees — bake them into the price.
   enableStripeTax: false, // FOUNDER DECISION
+
+  // Rate limits (T1-5) — best-effort abuse throttles.
+  signupMaxPerWindow: 5, // signups per IP per window
+  signupWindowMs: 10 * 60 * 1000, // 10 minutes
+  inboundSmsMaxPerWindow: 8, // inbound texts per phone per window before we stop invoking the agent
+  inboundSmsWindowMs: 5 * 60 * 1000, // 5 minutes
 };

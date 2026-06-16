@@ -10,6 +10,7 @@ const ERRORS: Record<string, string> = {
   already_member: "Looks like you already have a membership — log in instead, or text us.",
   cancelled: "No worries — your card wasn't charged. Ready when you are.",
   stripe: "Something went wrong starting checkout. Try again in a minute.",
+  rate_limited: "Too many attempts — give it a few minutes and try again.",
 };
 
 export default async function SignupPage({

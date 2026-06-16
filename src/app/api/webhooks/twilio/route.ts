@@ -6,6 +6,7 @@ import { waitUntil } from "@vercel/functions";
 import { config } from "@/config/app";
 import { handleInboundSms } from "@/lib/concierge";
 import { claimWebhook } from "@/lib/idempotency";
+import { rateLimit } from "@/lib/ratelimit";
 
 const EMPTY_TWIML = '<?xml version="1.0" encoding="UTF-8"?><Response></Response>';
 const twiml = () => new Response(EMPTY_TWIML, { headers: { "Content-Type": "text/xml" } });
@@ -35,6 +36,11 @@ export async function POST(req: Request) {
   // Idempotency: Twilio retries on slow/failed responses. Process each
   // MessageSid once; a retry returns immediately without re-running the agent.
   if (!(await claimWebhook("twilio", params.MessageSid ?? ""))) return twiml();
+
+  // Per-phone throttle: stop one number from spawning unbounded model calls.
+  if (!rateLimit(`sms:${from}`, config.inboundSmsMaxPerWindow, config.inboundSmsWindowMs)) {
+    return twiml();
+  }
 
   // The full concierge loop can take several seconds — longer than Twilio's
   // webhook timeout. Acknowledge immediately and finish the work in the
