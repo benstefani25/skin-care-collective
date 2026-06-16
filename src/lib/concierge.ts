@@ -12,6 +12,7 @@ import { sendSms } from "./twilio";
 import { billingLink } from "./links";
 import { bookAppointment, cancelAppointment, rescheduleAppointment } from "./booking";
 import { fmtDate, fmtTime, hoursUntil, slotStart, todayISO } from "./time";
+import { normalizePhone } from "./phone";
 
 const MAX_TOOL_ROUNDS = 6;
 
@@ -340,10 +341,14 @@ async function executeTool(
 export async function handleInboundSms(fromPhone: string, body: string): Promise<string> {
   const db = supabaseAdmin();
 
+  // Identity binds to the phone number, so the inbound lookup MUST normalize to
+  // the exact E.164 form signup stored — otherwise a member silently becomes an
+  // "unknown number" (T1-6). Twilio sends E.164, but normalize defensively.
+  const lookupPhone = normalizePhone(fromPhone) ?? fromPhone;
   const { data: member } = await db
     .from("members")
     .select("*")
-    .eq("phone", fromPhone)
+    .eq("phone", lookupPhone)
     .maybeSingle();
 
   // Unknown numbers get a polite signup pointer — no AI involved.
