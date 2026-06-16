@@ -9,8 +9,8 @@ export default function Home() {
         A fresh glow, <em>without leaving the house.</em>
       </h1>
       <p className="lede">
-        Your tan tech comes to you on a set schedule. One flat monthly membership, booked in
-        seconds by text — no salon, no checkout, no hassle.
+        Join online in about two minutes. Then book, reschedule, or skip your visits right
+        here — or just text us. One flat monthly membership, no salon, no checkout.
       </p>
       <div className="hero-actions">
         <Link className="btn full" href="/signup">
@@ -20,7 +20,10 @@ export default function Home() {
           Member login
         </Link>
       </div>
-      <p className="trust">Card on file · cancel or pause anytime · never pay at your appointment</p>
+      <p className="trust">Manage everything online · prefer texting? that works too</p>
+      <p className="fine" style={{ marginTop: 6 }}>
+        Card on file · cancel or pause anytime · never pay at your appointment
+      </p>
     </div>
   );
 }

@@ -9,8 +9,8 @@ export default function DonePage() {
         <span className="badge"><SunMark size={34} /></span>
         <h1>You&apos;re in!</h1>
         <p className="muted">
-          Welcome to {config.brandName}. Keep an eye out for a text from us — that number is your
-          front desk for booking, rescheduling, and any questions.
+          Welcome to {config.brandName}. Book, reschedule, or skip visits anytime right here on
+          the site. Prefer texting? Watch for a text from us — that number is your front desk too.
         </p>
       </div>
       <div className="card" style={{ textAlign: "left" }}>
