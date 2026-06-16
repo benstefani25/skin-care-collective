@@ -43,8 +43,11 @@ export const config = {
   techDayStartHour: 6, // run sheet unlocks at 6:00 AM local on visit days
   techLateDefaultMinutes: 15, // FOUNDER DECISION — default delay for the "running late" broadcast
 
-  // Payments (spec §9)
-  pastDueGraceAppointments: 1, // FOUNDER DECISION — honor 1 booked appt
+  // Payments (spec §9). Past-due policy (T1-9): a past_due member is blocked
+  // from NEW bookings (see bookAppointment); appointments she already booked are
+  // honored until their visit (payment failure doesn't cancel them). Resolving
+  // payment flips her back to active and restores booking. No numeric "grace
+  // count" — the previous pastDueGraceAppointments config was unused and removed.
 
   // Sales tax (T1-2). Leave FALSE until Stripe Tax is activated in the Stripe
   // dashboard (set a default tax code/category + add a registration for each

@@ -83,6 +83,10 @@ M2 (tech app + the wall), M3 (concierge), M4 (founder console + QC digest), M5 (
   - After rotating the Stripe key, also recreate the webhook signing secret if needed. Claude Code cannot rotate these for you.
 - `.gitignore` covers `.env*`; only `.env.example` (no real values) is tracked.
 
+## Past-due policy
+
+A member whose payment fails goes `past_due` (Stripe `invoice.payment_failed` webhook) and is **blocked from booking new appointments** until billing is fixed. Appointments she **already booked are honored** until their visit — a payment failure does not cancel them. When payment succeeds (`invoice.payment_succeeded`) she returns to `active` and can book again. There is no numeric grace counter (the unused `pastDueGraceAppointments` config was removed in T1-9). If a real multi-appointment grace is ever wanted, implement it explicitly in `bookAppointment`.
+
 ## Pricing & tax (founder decisions)
 
 - **Price:** $89/mo default (`config.defaultMonthlyPriceCents`), or prepay a 4-month semester. Each house can override `monthly_price_cents` (e.g. a lower founding-house rate). Semester amount derives from the house's monthly price × `semesterIntervalMonths`, minus `semesterPrepayDiscountPct` (default 0).

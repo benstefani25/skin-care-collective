@@ -29,6 +29,8 @@ export async function bookAppointment(opts: {
     .eq("id", opts.memberId)
     .maybeSingle();
   if (!member) return { ok: false, error: "member_not_found" };
+  // Past-due policy (T1-9): blocked from NEW bookings. Appointments she already
+  // booked are left untouched (honored until their visit); paying restores her.
   if (member.status === "past_due") return { ok: false, error: "past_due" };
   if (member.status !== "active") return { ok: false, error: "membership_inactive" };
 
