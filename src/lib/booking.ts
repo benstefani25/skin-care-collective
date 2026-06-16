@@ -210,3 +210,40 @@ export async function rescheduleAppointment(opts: {
 
   return { ok: true, appointmentId: next.id, late };
 }
+
+// Membership ended/paused → release all FUTURE booked appointments so they
+// don't appear as phantom bookings on tech run sheets (T0-4 [B1]). These are
+// system-initiated, not member-initiated, so they are NOT marked
+// `cancelled_late` (no fee) regardless of the cancellation window. Returns the
+// number of appointments released.
+export async function cancelFutureAppointmentsForMember(opts: {
+  memberId: string;
+  actor: Actor;
+  reason: string;
+}): Promise<number> {
+  const db = supabaseAdmin();
+  const { data: appts } = await db
+    .from("appointments")
+    .select("*, slot:slots(*, visit:visits(*))")
+    .eq("member_id", opts.memberId)
+    .eq("status", "booked");
+
+  let count = 0;
+  for (const appt of appts ?? []) {
+    if (!appt.slot?.visit) continue;
+    if (slotStart(appt.slot.visit.date, appt.slot.start_time) <= new Date()) continue; // future only
+    await db.from("appointments").update({ status: "cancelled" }).eq("id", appt.id);
+    await db.from("slots").update({ status: "open" }).eq("id", appt.slot_id);
+    await logEvent({
+      type: "appointment.cancelled",
+      actor_type: opts.actor.type,
+      actor_id: opts.actor.id ?? null,
+      house_id: appt.slot.visit.house_id,
+      member_id: opts.memberId,
+      appointment_id: appt.id,
+      payload: { reason: opts.reason, source: appt.source },
+    });
+    count++;
+  }
+  return count;
+}

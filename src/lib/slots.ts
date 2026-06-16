@@ -164,7 +164,8 @@ function buildSlotRows(
 // Standing members are placed first, in their coarse window preference
 // (early/mid/late third of the visit window), then confirmed by SMS with a
 // one-tap reschedule/skip link. Skipping never disables the standing flag.
-async function placeStandingAppointments(
+// Exported only so the regression test can lock the active-only filter (B2).
+export async function placeStandingAppointments(
   db: SupabaseClient,
   house: { id: string; visit_window_start: string; visit_window_end: string },
   visit: { id: string; date: string },

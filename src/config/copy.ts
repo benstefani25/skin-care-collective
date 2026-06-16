@@ -22,6 +22,12 @@ export const copy = {
     `Hi! Your ${config.brandName} membership payment didn't go through — usually just an expired card. ` +
     `Update it in a minute here: ${link}`,
 
+  // Fixed, safe reply sent whenever the concierge escalates (e.g. medical) —
+  // the member never receives the model's improvised text in that case.
+  smsEscalationHandoff: () =>
+    `Thanks for flagging this — a real person from ${config.brandName} will follow up with you ` +
+    `personally very shortly. For anything urgent or medical, please contact a healthcare professional.`,
+
   standingExplanation:
     "We'll auto-book you each visit; skip any time with one tap.",
 };
