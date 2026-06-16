@@ -6,6 +6,7 @@ import { logEvent } from "@/lib/events";
 import { sendSms } from "@/lib/twilio";
 import { billingLink } from "@/lib/links";
 import { cancelFutureAppointmentsForMember } from "@/lib/booking";
+import { claimWebhook } from "@/lib/idempotency";
 import { copy } from "@/config/copy";
 
 export async function POST(req: Request) {
@@ -19,6 +20,12 @@ export async function POST(req: Request) {
     event = getStripe().webhooks.constructEvent(body, signature, secret);
   } catch {
     return new Response("Invalid signature", { status: 400 });
+  }
+
+  // Idempotency (T1-4): Stripe re-delivers events. Process each event.id once so
+  // side effects (activation, dunning SMS) never duplicate on a retry.
+  if (!(await claimWebhook("stripe", event.id))) {
+    return Response.json({ received: true, duplicate: true });
   }
 
   const db = supabaseAdmin();
