@@ -16,6 +16,7 @@ export async function startSignup(formData: FormData) {
   // House is resolved from the opaque per-house signup token (T2-4) — never a
   // public house id, so no endpoint enumerates all houses.
   const houseToken = String(formData.get("house_token") ?? "");
+  const refCode = String(formData.get("ref") ?? "").trim();
   const firstName = String(formData.get("first_name") ?? "").trim();
   const lastName = String(formData.get("last_name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -43,6 +44,20 @@ export async function startSignup(formData: FormData) {
   const houseId = house.id;
   const backToForm = (err: string) => redirect(`/join/${houseToken}?error=${err}`);
 
+  // Referral attribution (T2-8): a liaison's ref code attributes this signup to
+  // her. Must be a liaison in the SAME house. No reward logic — plumbing only.
+  let referredBy: string | null = null;
+  if (refCode) {
+    const { data: liaison } = await db
+      .from("members")
+      .select("id")
+      .eq("referral_code", refCode)
+      .eq("is_liaison", true)
+      .eq("house_id", houseId)
+      .maybeSingle();
+    referredBy = liaison?.id ?? null;
+  }
+
   // Re-signup after an abandoned checkout (or a cancelled membership) reuses
   // the existing row; an active/paused/past_due member is sent to login.
   const { data: existing } = await db
@@ -54,7 +69,10 @@ export async function startSignup(formData: FormData) {
     backToForm("already_member");
   }
 
-  const fields = { house_id: houseId, first_name: firstName, last_name: lastName, email, phone };
+  const fields: Record<string, unknown> = { house_id: houseId, first_name: firstName, last_name: lastName, email, phone };
+  // Only set attribution on a genuinely new member, and never let someone
+  // attribute themselves.
+  if (referredBy && !existing) fields.referred_by_member_id = referredBy;
   let memberId: string;
   if (existing) {
     memberId = existing.id;

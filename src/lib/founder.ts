@@ -128,6 +128,26 @@ export async function getExceptions(): Promise<Exception[]> {
     }
   }
 
+  // Quarterly liaison review (T2-8): surface in the first week of each quarter
+  // if there are any liaisons — a gentle founder task, not a daily nag.
+  const now = new Date();
+  const inFirstWeekOfQuarter = now.getDate() <= 7 && now.getMonth() % 3 === 0; // Jan/Apr/Jul/Oct
+  if (inFirstWeekOfQuarter) {
+    const { count: liaisons } = await db
+      .from("members")
+      .select("id", { count: "exact", head: true })
+      .eq("is_liaison", true);
+    if ((liaisons ?? 0) > 0) {
+      out.push({
+        kind: "low_rating", // reuse a neutral watch styling
+        severity: "watch",
+        title: "Quarterly liaison review",
+        detail: `Review your ${liaisons} house liaison(s) — attribution and whatever reward you've settled on.`,
+        href: "/founder/members",
+      });
+    }
+  }
+
   // Act items first, then watch; within each, keep insertion order.
   return out.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === "act" ? -1 : 1));
 }

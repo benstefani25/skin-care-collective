@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { config } from "@/config/app";
 import { FounderNav } from "@/components/FounderNav";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { fmtDate, fmtTime, slotStart } from "@/lib/time";
@@ -27,6 +28,17 @@ export default async function MemberDetail({
     .eq("member_id", id)
     .order("created_at", { ascending: false })
     .limit(20);
+
+  // Referral attribution (T2-8): how many signups name this member as referrer.
+  const { count: referredCount } = await db
+    .from("members")
+    .select("id", { count: "exact", head: true })
+    .eq("referred_by_member_id", id);
+  const { data: house } = await db.from("houses").select("signup_token").eq("id", m.house_id).maybeSingle();
+  const referralLink =
+    m.is_liaison && m.referral_code && house?.signup_token
+      ? `${config.appBaseUrl}/join/${house.signup_token}?ref=${m.referral_code}`
+      : null;
 
   return (
     <div className="stack">
@@ -59,8 +71,31 @@ export default async function MemberDetail({
           <input type="checkbox" name="standing_appointment" defaultChecked={m.standing_appointment} />
           <span>Auto-book each visit (standing)</span>
         </label>
+        <label className="check">
+          <input type="checkbox" name="is_liaison" defaultChecked={m.is_liaison} />
+          <span>House liaison (rep) — gets a referral link</span>
+        </label>
         <button className="btn" type="submit">Save</button>
       </form>
+
+      {m.is_liaison && (
+        <div className="card">
+          <h2>Liaison</h2>
+          <p><strong>{referredCount ?? 0}</strong> signups attributed to her.</p>
+          {referralLink ? (
+            <>
+              <p className="fine">Her referral link (signups through it are credited to her):</p>
+              <input readOnly value={referralLink} />
+            </>
+          ) : (
+            <p className="muted">Save to generate her referral link.</p>
+          )}
+          <p className="fine">
+            Reward model (flat stipend vs. reduced/free membership vs. per-signup) is a founder
+            decision — not wired yet. This only tracks attribution.
+          </p>
+        </div>
+      )}
 
       <div className="card">
         <h2>Appointment history</h2>

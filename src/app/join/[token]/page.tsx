@@ -50,6 +50,7 @@ export default async function JoinPage({
   return (
     <form action={startSignup} className="stack">
       <input type="hidden" name="house_token" value={token} />
+      {sp.ref ? <input type="hidden" name="ref" value={sp.ref} /> : null}
       <Wordmark size={20} />
       <div>
         <h1>Join {house.name}</h1>
