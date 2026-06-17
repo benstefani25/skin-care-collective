@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { config } from "@/config/app";
 import { FounderNav } from "@/components/FounderNav";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { saveHouseAction } from "./actions";
@@ -24,6 +25,15 @@ export default async function HouseDetail({
       <FounderNav active="houses" />
       <h1>{house.name}</h1>
       {sp.ok && <p className="banner ok">Saved.</p>}
+
+      <div className="card">
+        <h2>Sign-up link</h2>
+        <p className="muted">Hand this out (or turn it into a QR code) for {house.name}. It only works while the house is active.</p>
+        <input readOnly value={`${config.appBaseUrl}/join/${house.signup_token}`} />
+        {house.status !== "active" && (
+          <p className="fine">This house is <strong>{house.status}</strong> — set it to active below before sharing.</p>
+        )}
+      </div>
 
       <form action={saveHouseAction} className="stack card">
         <input type="hidden" name="id" value={house.id} />

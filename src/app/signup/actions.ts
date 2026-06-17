@@ -13,13 +13,15 @@ import { memberToken } from "@/lib/links";
 import { cadenceCheckout, Cadence } from "@/lib/pricing";
 
 export async function startSignup(formData: FormData) {
-  const houseId = String(formData.get("house_id") ?? "");
+  // House is resolved from the opaque per-house signup token (T2-4) — never a
+  // public house id, so no endpoint enumerates all houses.
+  const houseToken = String(formData.get("house_token") ?? "");
   const firstName = String(formData.get("first_name") ?? "").trim();
   const lastName = String(formData.get("last_name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
   const cadence: Cadence = formData.get("cadence") === "semester" ? "semester" : "monthly";
-  if (!houseId || !firstName || !lastName || !email || !phone) {
+  if (!houseToken || !firstName || !lastName || !email || !phone) {
     redirect("/signup?error=invalid");
   }
 
@@ -27,17 +29,19 @@ export async function startSignup(formData: FormData) {
   const hdrs = await headers();
   const ip = (hdrs.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
   if (!rateLimit(`signup:${ip}`, config.signupMaxPerWindow, config.signupWindowMs)) {
-    redirect("/signup?error=rate_limited");
+    redirect(`/join/${houseToken}?error=rate_limited`);
   }
 
   const db = supabaseAdmin();
   const { data: house } = await db
     .from("houses")
     .select("*")
-    .eq("id", houseId)
+    .eq("signup_token", houseToken)
     .eq("status", "active")
     .maybeSingle();
   if (!house) redirect("/signup?error=invalid");
+  const houseId = house.id;
+  const backToForm = (err: string) => redirect(`/join/${houseToken}?error=${err}`);
 
   // Re-signup after an abandoned checkout (or a cancelled membership) reuses
   // the existing row; an active/paused/past_due member is sent to login.
@@ -47,7 +51,7 @@ export async function startSignup(formData: FormData) {
     .eq("phone", phone)
     .maybeSingle();
   if (existing && existing.status !== "pending" && existing.status !== "cancelled") {
-    redirect("/signup?error=already_member");
+    backToForm("already_member");
   }
 
   const fields = { house_id: houseId, first_name: firstName, last_name: lastName, email, phone };
@@ -61,7 +65,7 @@ export async function startSignup(formData: FormData) {
       .insert({ ...fields, status: "pending" })
       .select("id")
       .single();
-    if (error || !created) redirect("/signup?error=invalid");
+    if (error || !created) backToForm("invalid");
     memberId = created!.id;
   }
 
@@ -113,7 +117,7 @@ export async function startSignup(formData: FormData) {
       },
     ],
     success_url: `${config.appBaseUrl}/signup/preferences?t=${memberToken(memberId)}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${config.appBaseUrl}/signup?error=cancelled`,
+    cancel_url: `${config.appBaseUrl}/join/${houseToken}?error=cancelled`,
     metadata: { member_id: memberId },
     subscription_data: { metadata: { member_id: memberId, cadence } },
     ...tax,
@@ -128,5 +132,6 @@ export async function startSignup(formData: FormData) {
     payload: { cadence, amount_cents: billing.unit_amount },
   });
 
-  redirect(session.url ?? "/signup?error=stripe");
+  if (!session.url) backToForm("stripe");
+  redirect(session.url!);
 }
