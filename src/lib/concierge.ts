@@ -20,7 +20,7 @@ const SAFE_FALLBACK =
   "Sorry — I'm having trouble on my end right now. A real human will follow up with you shortly!";
 
 function conciergeModel(): string {
-  return process.env.CONCIERGE_MODEL ?? "claude-opus-4-8";
+  return process.env.CONCIERGE_MODEL ?? config.defaultModel;
 }
 
 // ── Tool definitions ────────────────────────────────────────────────────────

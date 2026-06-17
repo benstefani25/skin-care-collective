@@ -15,6 +15,9 @@ export const config = {
   get founderEmail() {
     return (process.env.FOUNDER_EMAIL ?? "").toLowerCase();
   },
+  // Single source of truth for the Claude model (T2-9). Per-agent overrides
+  // (CONCIERGE_MODEL/COPILOT_MODEL/QC_MODEL/OPS_MODEL) fall back to this.
+  defaultModel: "claude-opus-4-8",
 
   // Booking engine (spec §4)
   slotGenerationWeeksAhead: 3,

@@ -8,6 +8,7 @@ const TABS: Array<{ key: string; href: string; label: string }> = [
   { key: "techs", href: "/founder/techs", label: "Techs" },
   { key: "visits", href: "/founder/visits", label: "Visits" },
   { key: "payroll", href: "/founder/payroll", label: "Payroll" },
+  { key: "ops", href: "/founder/ops", label: "Ops" },
   { key: "digest", href: "/founder/digest", label: "Digest" },
 ];
 

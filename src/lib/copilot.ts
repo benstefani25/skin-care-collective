@@ -16,7 +16,7 @@ const MAX_TOOL_ROUNDS = 4;
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 
 function copilotModel(): string {
-  return process.env.COPILOT_MODEL ?? "claude-opus-4-8";
+  return process.env.COPILOT_MODEL ?? config.defaultModel;
 }
 
 const TOOLS: Anthropic.Tool[] = [

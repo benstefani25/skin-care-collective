@@ -11,7 +11,7 @@ import { addDaysISO, slotStart, todayISO } from "./time";
 export const QC_PROMPT_VERSION = "qc-v1";
 
 function qcModel(): string {
-  return process.env.QC_MODEL ?? "claude-opus-4-8";
+  return process.env.QC_MODEL ?? config.defaultModel;
 }
 
 type HouseMetrics = {
