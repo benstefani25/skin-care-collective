@@ -166,6 +166,35 @@ input.short { width: 96px; min-width: 96px; }
 .hero-actions { display: flex; flex-direction: column; gap: 12px; }
 .trust { margin-top: 22px; color: var(--muted); font-size: 0.85rem; display: flex; gap: 8px; align-items: center; justify-content: center; }
 
+/* Marketing landing */
+body:has(.marketing) main { max-width: 720px; }
+.marketing { display: flex; flex-direction: column; gap: 44px; }
+.mk-section { display: flex; flex-direction: column; gap: 14px; }
+.mk-section > h2 { font-size: 1.5rem; text-align: center; margin: 0; }
+.mk-steps { display: flex; flex-direction: column; gap: 14px; }
+.mk-step { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow); }
+.mk-step h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: 1.1rem; margin: 8px 0 4px; }
+.mk-step-num { width: 34px; height: 34px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-deep); display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display), serif; }
+.mk-band { background: var(--bg-warm); border-radius: var(--radius-lg); padding: 28px 20px; text-align: center; align-items: center; }
+.mk-sun { color: var(--accent); }
+.mk-cols { display: flex; flex-direction: column; gap: 12px; }
+.mk-cols h3 { font-family: var(--font-display), serif; font-weight: 500; margin: 0 0 8px; }
+.mk-list { margin: 0; padding-left: 18px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.mk-benefits { display: flex; flex-direction: column; gap: 10px; }
+.mk-benefit { background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 14px; }
+.mk-faq { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.mk-faq summary { font-weight: 600; cursor: pointer; }
+.mk-faq p { margin: 10px 0 0; }
+.mk-cta { text-align: center; align-items: center; background: var(--accent-soft); border-radius: var(--radius-lg); padding: 28px 20px; }
+.mk-cta .btn { max-width: 280px; }
+.mk-footer { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 20px; border-top: 1px solid var(--line); }
+@media (min-width: 560px) {
+  .mk-steps { flex-direction: row; }
+  .mk-step { flex: 1; }
+  .mk-cols { flex-direction: row; }
+  .mk-cols .card { flex: 1; }
+}
+
 /* Celebratory "done" page */
 .celebrate { text-align: center; padding: 16px 0; }
 .celebrate .badge {
