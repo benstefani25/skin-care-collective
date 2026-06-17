@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { config } from "@/config/app";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { resolveFounder } from "@/lib/auth";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -16,9 +17,9 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${config.appBaseUrl}/login?error=invalid_link`);
   }
 
-  // Founder first — it's a single configured email, no row to link.
+  // Founder first — role-based (staff table), with env bootstrap fallback.
   const email = data.user.email?.toLowerCase();
-  if (email && config.founderEmail && email === config.founderEmail) {
+  if (await resolveFounder(data.user)) {
     return NextResponse.redirect(`${config.appBaseUrl}/founder`);
   }
 

@@ -6,6 +6,7 @@ import type { EmailOtpType } from "@supabase/supabase-js";
 import { config } from "@/config/app";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { resolveFounder } from "@/lib/auth";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
   const email = data.user.email?.toLowerCase();
 
   // Founder first — a configured email, no row to link.
-  if (email && config.founderEmail && email === config.founderEmail) {
+  if (await resolveFounder(data.user)) {
     return NextResponse.redirect(`${config.appBaseUrl}/founder`);
   }
 
