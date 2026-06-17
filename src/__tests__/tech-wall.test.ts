@@ -179,6 +179,11 @@ describe("tech wall", () => {
     expect(JSON.stringify(data ?? [])).not.toContain("director-secret");
   });
 
+  it("cannot read the founder-only house_contacts table (T2-5)", async () => {
+    const { data } = await techClient.from("house_contacts").select("*");
+    expect(data ?? []).toHaveLength(0);
+  });
+
   it("sees only her own today visit, not the other tech's", async () => {
     const { data: visits } = await techClient.from("visits").select("id");
     const visitIds = (visits ?? []).map((v: any) => v.id);

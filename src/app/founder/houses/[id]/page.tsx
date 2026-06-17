@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { config } from "@/config/app";
 import { FounderNav } from "@/components/FounderNav";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { saveHouseAction } from "./actions";
+import { addContactAction, deleteContactAction, saveHouseAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +17,14 @@ export default async function HouseDetail({
 }) {
   const { id } = await params;
   const sp = await searchParams;
-  const { data: house } = await supabaseAdmin().from("houses").select("*").eq("id", id).maybeSingle();
+  const db = supabaseAdmin();
+  const { data: house } = await db.from("houses").select("*").eq("id", id).maybeSingle();
   if (!house) notFound();
+  const { data: contacts } = await db
+    .from("house_contacts")
+    .select("*")
+    .eq("house_id", id)
+    .order("created_at");
 
   return (
     <div className="stack">
@@ -64,6 +70,36 @@ export default async function HouseDetail({
         </label>
         <button className="btn" type="submit">Save</button>
       </form>
+
+      <div className="card">
+        <h2>House contacts</h2>
+        <p className="fine">House mom, chapter president, social chair, etc. Founder-only — never shown to techs or members.</p>
+        {(contacts ?? []).map((c: any) => (
+          <div className="row" key={c.id} style={{ justifyContent: "space-between", borderTop: "1px solid var(--line)", paddingTop: 8, marginTop: 8 }}>
+            <span>
+              <strong>{c.role}:</strong> {c.name}
+              {c.contact ? <span className="muted"> · {c.contact}</span> : null}
+              {c.notes ? <div className="fine">{c.notes}</div> : null}
+            </span>
+            <form action={deleteContactAction}>
+              <input type="hidden" name="contact_id" value={c.id} />
+              <input type="hidden" name="house_id" value={house.id} />
+              <button className="btn small danger" type="submit">Remove</button>
+            </form>
+          </div>
+        ))}
+        {(contacts ?? []).length === 0 && <p className="muted">No contacts yet.</p>}
+        <form action={addContactAction} className="stack" style={{ marginTop: 12 }}>
+          <input type="hidden" name="house_id" value={house.id} />
+          <div className="row">
+            <label style={{ flex: 1 }}>Role<input name="role" placeholder="House mom" required /></label>
+            <label style={{ flex: 1 }}>Name<input name="name" required /></label>
+          </div>
+          <label>Contact (phone/email)<input name="contact" /></label>
+          <label>Notes<input name="notes" /></label>
+          <button className="btn small secondary" type="submit">Add contact</button>
+        </form>
+      </div>
 
       <div className="card">
         <h2>Visit cadence</h2>
