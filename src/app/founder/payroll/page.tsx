@@ -16,7 +16,10 @@ export default async function PayrollPage() {
       <p className="muted">
         Current period: {fmtDate(period.start)} – {fmtDate(period.end)} (biweekly)
       </p>
-      <a className="btn" href="/founder/payroll/export">Download CSV</a>
+      <div className="row">
+        <a className="btn" href="/founder/payroll/export">Download CSV</a>
+        <a className="btn secondary" href="/founder/payroll/export?format=provider">Provider import (Gusto-style)</a>
+      </div>
 
       <table className="data">
         <thead>

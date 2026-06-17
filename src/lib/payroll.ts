@@ -27,6 +27,9 @@ export function currentPayPeriod(today = todayISO()): { start: string; end: stri
 
 export type PayrollRow = {
   tech: string;
+  tech_first: string;
+  tech_last: string;
+  tech_email: string;
   period_start: string;
   period_end: string;
   completed_tans: number;
@@ -137,6 +140,9 @@ export async function runPayroll(periodStart?: string): Promise<PayrollRow[]> {
 
     rows.push({
       tech: `${tech.first_name} ${tech.last_name}`,
+      tech_first: tech.first_name,
+      tech_last: tech.last_name,
+      tech_email: tech.email,
       period_start: period.start,
       period_end: period.end,
       completed_tans: tans.length,
@@ -166,6 +172,45 @@ export function payrollCsv(rows: PayrollRow[]): string {
       r.hours_worked,
       dollars(r.wage_floor_cents_per_hour),
       dollars(r.wage_floor_topup_cents),
+      dollars(r.deferred_accrued_cents),
+      dollars(r.deferred_balance_cents),
+    ].join(",")
+  );
+  return [header, ...lines].join("\n");
+}
+
+// Provider-importable export (T2-7) — clean columns mapping to a Gusto-style
+// payroll import. We compute and export; the provider files taxes. Deferred
+// figures are carried as memo columns (a bonus accrual, NOT paid this period).
+// Total gross this period = base pay + wage-floor top-up (deferred excluded).
+export function payrollProviderCsv(rows: PayrollRow[]): string {
+  const header = [
+    "first_name",
+    "last_name",
+    "email",
+    "pay_period_start",
+    "pay_period_end",
+    "regular_hours",
+    "completed_tans",
+    "gross_base_pay",
+    "wage_floor_top_up",
+    "total_gross_pay",
+    "deferred_accrued_memo",
+    "deferred_balance_memo",
+  ].join(",");
+  const dollars = (c: number) => (c / 100).toFixed(2);
+  const lines = rows.map((r) =>
+    [
+      `"${r.tech_first}"`,
+      `"${r.tech_last}"`,
+      r.tech_email,
+      r.period_start,
+      r.period_end,
+      r.hours_worked,
+      r.completed_tans,
+      dollars(r.base_pay_cents),
+      dollars(r.wage_floor_topup_cents),
+      dollars(r.base_pay_cents + r.wage_floor_topup_cents),
       dollars(r.deferred_accrued_cents),
       dollars(r.deferred_balance_cents),
     ].join(",")
