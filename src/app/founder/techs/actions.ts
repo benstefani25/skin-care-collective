@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { config } from "@/config/app";
 import { requireFounder } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { TablesUpdate } from "@/lib/supabase/types";
 import { logEvent } from "@/lib/events";
 import { normalizePhone } from "@/lib/phone";
 
@@ -61,7 +62,7 @@ export async function saveTechAction(formData: FormData) {
   const baseRate = dollarsToCents(String(formData.get("base_rate") ?? ""), before.base_rate_cents);
   const deferredRate = dollarsToCents(String(formData.get("deferred_rate") ?? ""), before.deferred_rate_cents);
 
-  const update: Record<string, unknown> = {
+  const update: TablesUpdate<"techs"> = {
     status,
     semester_number: semester,
     base_rate_cents: baseRate,

@@ -7,6 +7,7 @@ import { sendSms } from "@/lib/twilio";
 import { billingLink } from "@/lib/links";
 import { cancelFutureAppointmentsForMember } from "@/lib/booking";
 import { claimWebhook } from "@/lib/idempotency";
+import { TablesUpdate } from "@/lib/supabase/types";
 import { copy } from "@/config/copy";
 
 export async function POST(req: Request) {
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
       const session = event.data.object as Stripe.Checkout.Session;
       const memberId = session.metadata?.member_id;
       if (memberId) {
-        const update: Record<string, unknown> = { status: "active" };
+        const update: TablesUpdate<"members"> = { status: "active" };
         if (typeof session.customer === "string") update.stripe_customer_id = session.customer;
         if (typeof session.subscription === "string") {
           update.stripe_subscription_id = session.subscription;

@@ -4,6 +4,7 @@ import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { requireFounder } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { TablesUpdate } from "@/lib/supabase/types";
 import { logEvent } from "@/lib/events";
 
 export async function saveMemberAction(formData: FormData) {
@@ -14,7 +15,7 @@ export async function saveMemberAction(formData: FormData) {
   const db = supabaseAdmin();
   const isLiaison = formData.get("is_liaison") === "on";
 
-  const update: Record<string, unknown> = {
+  const update: TablesUpdate<"members"> = {
     status: String(formData.get("status") ?? "active"),
     shade_preference: String(formData.get("shade_preference") ?? "").trim() || null,
     service_notes: String(formData.get("service_notes") ?? "").trim() || null,

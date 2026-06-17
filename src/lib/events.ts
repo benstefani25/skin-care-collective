@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "./supabase/admin";
+import type { Json } from "./supabase/database.types";
 
 export type ActorType = "member" | "tech" | "founder" | "system" | "ai";
 
@@ -19,7 +20,7 @@ export type EventInput = {
 export async function logEvent(e: EventInput): Promise<void> {
   const { error } = await supabaseAdmin()
     .from("events")
-    .insert({ payload: {}, ...e });
+    .insert({ ...e, payload: (e.payload ?? {}) as Json });
   if (error) {
     console.error(`[events] FAILED to log '${e.type}':`, error.message);
   }

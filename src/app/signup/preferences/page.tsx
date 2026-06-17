@@ -1,6 +1,7 @@
 import { copy } from "@/config/copy";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { verifyToken } from "@/lib/links";
+import { TablesUpdate } from "@/lib/supabase/types";
 import { getStripe } from "@/lib/stripe";
 import { logEvent } from "@/lib/events";
 import { savePreferences } from "./actions";
@@ -40,7 +41,7 @@ export default async function PreferencesPage({
     try {
       const session = await getStripe().checkout.sessions.retrieve(sp.session_id);
       if (session.payment_status === "paid" && session.metadata?.member_id === member.id) {
-        const update: Record<string, unknown> = { status: "active" };
+        const update: TablesUpdate<"members"> = { status: "active" };
         if (typeof session.customer === "string") update.stripe_customer_id = session.customer;
         if (typeof session.subscription === "string") {
           update.stripe_subscription_id = session.subscription;

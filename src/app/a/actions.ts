@@ -52,9 +52,9 @@ export async function oneTapMove(formData: FormData) {
     .select("*, slot:slots(*, visit:visits(*))")
     .eq("id", result.appointmentId)
     .single();
-  const link = appointmentLink(
-    result.appointmentId,
-    slotStart(next.slot.visit.date, next.slot.start_time)
-  );
+  const slot = next?.slot;
+  const visit = slot?.visit;
+  if (!slot || !visit) redirect(`/a/${token}?done=moved`);
+  const link = appointmentLink(result.appointmentId, slotStart(visit!.date, slot!.start_time));
   redirect(`${link.substring(link.indexOf("/a/"))}?done=moved`);
 }

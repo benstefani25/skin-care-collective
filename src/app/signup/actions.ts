@@ -10,6 +10,7 @@ import { getStripe } from "@/lib/stripe";
 import { logEvent } from "@/lib/events";
 import { normalizePhone } from "@/lib/phone";
 import { memberToken } from "@/lib/links";
+import { TablesInsert } from "@/lib/supabase/types";
 import { cadenceCheckout, Cadence } from "@/lib/pricing";
 
 export async function startSignup(formData: FormData) {
@@ -69,7 +70,7 @@ export async function startSignup(formData: FormData) {
     backToForm("already_member");
   }
 
-  const fields: Record<string, unknown> = { house_id: houseId, first_name: firstName, last_name: lastName, email, phone };
+  const fields: TablesInsert<"members"> = { house_id: houseId, first_name: firstName, last_name: lastName, email, phone };
   // Only set attribution on a genuinely new member, and never let someone
   // attribute themselves.
   if (referredBy && !existing) fields.referred_by_member_id = referredBy;
