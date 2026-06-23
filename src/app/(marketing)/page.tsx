@@ -27,7 +27,7 @@ export default function Home() {
           <Link className="btn full" href="/find">{m.ctaFindHouse}</Link>
           <Link className="btn secondary full" href="/bring-scc">{m.ctaBringScc}</Link>
         </div>
-        <p className="trust">{m.neverPayTech}</p>
+        <p className="trust">{m.heroTrust}</p>
       </section>
 
       <section className="mk-section">

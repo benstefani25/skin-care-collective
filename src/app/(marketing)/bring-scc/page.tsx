@@ -35,7 +35,6 @@ export default async function BringPage({
       <label>Your phone or email<input name="contact" required /></label>
       <label>Anything else? (optional)<input name="note" /></label>
       <button className="btn full" type="submit">Send</button>
-      <p className="fine">{m.neverPayTech}</p>
     </form>
   );
 }
