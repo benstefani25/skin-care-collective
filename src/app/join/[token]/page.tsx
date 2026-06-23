@@ -98,10 +98,11 @@ export default async function JoinPage({
         </label>
       </div>
 
+      <p className="banner ok" style={{ marginBottom: 0 }}>{copy.marketing.checkoutNeverPay}</p>
       <button className="btn full" type="submit">Continue to payment</button>
       <p className="fine">
-        Card on file — never pay at an appointment. Your exact total is shown on the secure
-        checkout page. Pause or cancel anytime from your account.
+        Your exact total is shown on the secure checkout page. Pause or cancel anytime from your
+        account.
       </p>
     </form>
   );

@@ -46,6 +46,9 @@ export const copy = {
     ctaFindHouse: "Join your house",
     ctaBringScc: "Request your house",
     heroTrust: "We come to you · card on file · pause anytime",
+    // R2-3: reassurance at the moment of payment (also lives in the FAQ).
+    checkoutNeverPay:
+      "Your membership is billed to the card on file. You'll never pay your technician at an appointment.",
     memberLogin: "Member login",
     navItems: [
       { href: "/how-it-works", label: "How it works" },
