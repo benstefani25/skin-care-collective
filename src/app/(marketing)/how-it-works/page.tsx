@@ -9,15 +9,21 @@ export default function HowItWorks() {
     <div className="stack mk-narrow">
       <h1>{h.title}</h1>
       <p className="muted">{h.intro}</p>
-      <div className="mk-steps">
+
+      {/* Stacked, click-to-expand steps (was a long-skinny row). First one
+          open by default so the page doesn't read as all-collapsed. */}
+      <div className="mk-accordion">
         {h.steps.map((s, i) => (
-          <div className="mk-step" key={i}>
-            <div className="mk-step-num" aria-hidden="true">{i + 1}</div>
-            <h3>{s.title}</h3>
+          <details className="mk-acc-item" key={i} open={i === 0}>
+            <summary>
+              <span className="mk-acc-num" aria-hidden="true">{i + 1}</span>
+              <span className="mk-acc-title">{s.title}</span>
+            </summary>
             <p className="muted">{s.body}</p>
-          </div>
+          </details>
         ))}
       </div>
+
       <Link className="btn full" href="/find">{copy.marketing.ctaFindHouse}</Link>
     </div>
   );

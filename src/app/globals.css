@@ -228,6 +228,17 @@ body:has(.mk-page) main { max-width: 960px; padding: 0 0 48px; }
 .mk-teaser h3 { font-family: var(--font-display), serif; font-weight: 500; margin: 8px 0 4px; }
 .mk-teaser-more { color: var(--accent-deep); font-weight: 600; font-size: 0.9rem; }
 
+/* How-it-works stacked accordion */
+.mk-accordion { display: flex; flex-direction: column; gap: 10px; }
+.mk-acc-item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.mk-acc-item summary { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; list-style: none; font-weight: 600; }
+.mk-acc-item summary::-webkit-details-marker { display: none; }
+.mk-acc-item summary::after { content: "+"; margin-left: auto; color: var(--muted); font-size: 1.3rem; line-height: 1; }
+.mk-acc-item[open] summary::after { content: "–"; }
+.mk-acc-num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-deep); display: flex; align-items: center; justify-content: center; font-family: var(--font-display), serif; font-weight: 600; }
+.mk-acc-title { font-family: var(--font-display), serif; font-weight: 500; font-size: 1.05rem; }
+.mk-acc-item > p { margin: 0 16px 14px 58px; }
+
 .mk-footer-nav { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
 .mk-footer-nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 .mk-footer-nav a:hover { color: var(--ink); }
