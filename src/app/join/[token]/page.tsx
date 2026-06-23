@@ -16,6 +16,8 @@ const ERRORS: Record<string, string> = {
   stripe: "Something went wrong starting checkout. Try again in a minute.",
   rate_limited: "Too many attempts — give it a few minutes and try again.",
   waiver: copy.marketing.waiverRequired,
+  signature: copy.marketing.waiverSignRequired,
+  sms_consent: copy.marketing.smsConsentRequired,
 };
 
 export default async function JoinPage({
@@ -86,15 +88,23 @@ export default async function JoinPage({
         </label>
       </fieldset>
 
-      {/* Waiver — required consent collected at signup. */}
-      <div className="card" style={{ marginBottom: 0 }}>
+      {/* Waiver — e-signature consent collected at signup (R2-5). */}
+      <div className="card stack" style={{ marginBottom: 0 }}>
         <details>
           <summary style={{ fontWeight: 600, cursor: "pointer" }}>{copy.marketing.waiverTitle}</summary>
           <p className="fine" style={{ marginTop: 8 }}>{copy.marketing.waiverText}</p>
         </details>
-        <label className="check" style={{ marginTop: 10 }}>
+        <label className="check">
           <input type="checkbox" name="waiver" value="on" required />
           <span>{copy.marketing.waiverAgree}</span>
+        </label>
+        <label className="check">
+          <input type="checkbox" name="sms_consent" value="on" required />
+          <span>{copy.marketing.smsConsentLabel}</span>
+        </label>
+        <label>
+          {copy.marketing.waiverSignLabel}
+          <input name="signature" autoComplete="name" placeholder="Your full legal name" required />
         </label>
       </div>
 

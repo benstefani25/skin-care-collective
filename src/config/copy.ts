@@ -83,6 +83,10 @@ export const copy = {
       "I understand a spray tan is a cosmetic sunless tan using DHA — temporary color that develops over a few hours and fades gradually. Results vary by skin and prep, and a spray tan provides no sun protection. If I have sensitive skin or known allergies I'll request a patch test first. I accept responsibility for following the prep and aftercare guidance, and I release the provider from liability for ordinary cosmetic outcomes such as clothing/sheet staining or uneven fading. (Draft text — pending legal review.)",
     waiverAgree: "I've read and agree to the consent & waiver above.",
     waiverRequired: "Please read and agree to the waiver to continue.",
+    waiverSignLabel: "Type your full legal name to sign",
+    waiverSignRequired: "Please type your full legal name to sign the waiver.",
+    smsConsentLabel: "I agree to receive text messages about my appointments (reminders, scheduling).",
+    smsConsentRequired: "Text-message consent is required so we can confirm and remind you about visits.",
 
     contactTitle: "Contact us",
     contactIntro: "Questions? Send a note — or just text us, that's our front desk too.",

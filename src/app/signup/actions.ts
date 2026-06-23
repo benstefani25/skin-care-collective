@@ -24,8 +24,15 @@ export async function startSignup(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
   const cadence: Cadence = formData.get("cadence") === "semester" ? "semester" : "monthly";
+  // E-signature waiver + SMS consent (R2-5) — all required to complete signup.
   const waiverAccepted = formData.get("waiver") === "on";
-  if (!waiverAccepted && houseToken) redirect(`/join/${houseToken}?error=waiver`);
+  const smsConsent = formData.get("sms_consent") === "on";
+  const signature = String(formData.get("signature") ?? "").trim();
+  if (houseToken) {
+    if (!waiverAccepted) redirect(`/join/${houseToken}?error=waiver`);
+    if (!signature) redirect(`/join/${houseToken}?error=signature`);
+    if (!smsConsent) redirect(`/join/${houseToken}?error=sms_consent`);
+  }
   if (!houseToken || !firstName || !lastName || !email || !phone) {
     redirect("/signup?error=invalid");
   }
@@ -33,6 +40,7 @@ export async function startSignup(formData: FormData) {
   // Throttle signup per IP — each attempt can mint a Stripe customer.
   const hdrs = await headers();
   const ip = (hdrs.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+  const userAgent = hdrs.get("user-agent") ?? "unknown";
   if (!rateLimit(`signup:${ip}`, config.signupMaxPerWindow, config.signupWindowMs)) {
     redirect(`/join/${houseToken}?error=rate_limited`);
   }
@@ -153,14 +161,29 @@ export async function startSignup(formData: FormData) {
     house_id: houseId,
     payload: { cadence, amount_cents: billing.unit_amount },
   });
-  // Durable consent record (append-only log).
+  // Immutable, tamper-evident consent records (append-only events log, R2-5).
+  const signedAt = new Date().toISOString();
   await logEvent({
-    type: "waiver.accepted",
+    type: "consent.waiver_signed",
     actor_type: "member",
     actor_id: memberId,
     member_id: memberId,
     house_id: houseId,
-    payload: { waiver_version: copy.marketing.waiverVersion, accepted_at: new Date().toISOString() },
+    payload: {
+      waiver_version: copy.marketing.waiverVersion,
+      signature,
+      signed_at: signedAt,
+      ip,
+      user_agent: userAgent,
+    },
+  });
+  await logEvent({
+    type: "consent.sms_opt_in",
+    actor_type: "member",
+    actor_id: memberId,
+    member_id: memberId,
+    house_id: houseId,
+    payload: { opted_in: true, signed_at: signedAt, ip, user_agent: userAgent },
   });
 
   if (!session.url) backToForm("stripe");

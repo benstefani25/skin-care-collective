@@ -29,6 +29,14 @@ export default async function MemberDetail({
     .order("created_at", { ascending: false })
     .limit(20);
 
+  // Consent records (R2-5) — read-only, from the append-only events log.
+  const { data: consents } = await db
+    .from("events")
+    .select("type, payload, created_at")
+    .eq("member_id", id)
+    .in("type", ["consent.waiver_signed", "consent.sms_opt_in"])
+    .order("created_at", { ascending: false });
+
   // Referral attribution (T2-8): how many signups name this member as referrer.
   const { count: referredCount } = await db
     .from("members")
@@ -105,6 +113,25 @@ export default async function MemberDetail({
             <span>{a.slot?.visit ? `${fmtDate(a.slot.visit.date)} ${fmtTime(a.slot.start_time)}` : "—"}</span>
             <span className="pill">{a.status}</span>
           </p>
+        ))}
+      </div>
+
+      <div className="card">
+        <h2>Consents</h2>
+        <p className="fine">Signed at sign-up. Recorded in the append-only log — read-only, never editable.</p>
+        {(consents ?? []).length === 0 && <p className="muted">No consent records (member predates the e-signature step).</p>}
+        {(consents ?? []).map((c: any, i: number) => (
+          <div key={i} className="row" style={{ justifyContent: "space-between", borderTop: "1px solid var(--line)", paddingTop: 8, marginTop: 8 }}>
+            <span>
+              <strong>{c.type === "consent.waiver_signed" ? "Waiver" : "SMS consent"}</strong>
+              {c.payload?.signature ? <span className="muted"> · signed “{c.payload.signature}”</span> : null}
+              {c.payload?.waiver_version ? <span className="fine"> ({c.payload.waiver_version})</span> : null}
+              <div className="fine">
+                {new Date(c.created_at).toLocaleString()}
+                {c.payload?.ip ? ` · ${c.payload.ip}` : ""}
+              </div>
+            </span>
+          </div>
         ))}
       </div>
     </div>
