@@ -10,6 +10,7 @@ const TABS: Array<{ key: string; href: string; label: string }> = [
   { key: "payroll", href: "/founder/payroll", label: "Payroll" },
   { key: "ops", href: "/founder/ops", label: "Ops" },
   { key: "digest", href: "/founder/digest", label: "Digest" },
+  { key: "password", href: "/set-password", label: "Password" },
 ];
 
 export function FounderNav({ active }: { active: string }) {

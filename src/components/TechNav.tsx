@@ -18,6 +18,7 @@ export function TechNav({ active }: { active: "today" | "earnings" | "messages" 
         <Link href="/tech/earnings" className={active === "earnings" ? "on" : ""}>
           Earnings
         </Link>
+        <Link href="/set-password">Password</Link>
       </nav>
     </header>
   );
