@@ -1,6 +1,7 @@
 // Per-house signup (T2-4). Reached via the house's opaque link/QR. The house
 // is resolved from the token server-side; there is no public list of houses.
 import { config } from "@/config/app";
+import { copy } from "@/config/copy";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Wordmark } from "@/components/Wordmark";
 import { fmtUsd, semesterAmountCents } from "@/lib/pricing";
@@ -14,6 +15,7 @@ const ERRORS: Record<string, string> = {
   cancelled: "No worries — your card wasn't charged. Ready when you are.",
   stripe: "Something went wrong starting checkout. Try again in a minute.",
   rate_limited: "Too many attempts — give it a few minutes and try again.",
+  waiver: copy.marketing.waiverRequired,
 };
 
 export default async function JoinPage({
@@ -83,6 +85,18 @@ export default async function JoinPage({
           </span>
         </label>
       </fieldset>
+
+      {/* Waiver — required consent collected at signup. */}
+      <div className="card" style={{ marginBottom: 0 }}>
+        <details>
+          <summary style={{ fontWeight: 600, cursor: "pointer" }}>{copy.marketing.waiverTitle}</summary>
+          <p className="fine" style={{ marginTop: 8 }}>{copy.marketing.waiverText}</p>
+        </details>
+        <label className="check" style={{ marginTop: 10 }}>
+          <input type="checkbox" name="waiver" value="on" required />
+          <span>{copy.marketing.waiverAgree}</span>
+        </label>
+      </div>
 
       <button className="btn full" type="submit">Continue to payment</button>
       <p className="fine">

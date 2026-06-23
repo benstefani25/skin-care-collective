@@ -10,6 +10,7 @@ import { getStripe } from "@/lib/stripe";
 import { logEvent } from "@/lib/events";
 import { normalizePhone } from "@/lib/phone";
 import { memberToken } from "@/lib/links";
+import { copy } from "@/config/copy";
 import { TablesInsert } from "@/lib/supabase/types";
 import { cadenceCheckout, Cadence } from "@/lib/pricing";
 
@@ -23,6 +24,8 @@ export async function startSignup(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
   const cadence: Cadence = formData.get("cadence") === "semester" ? "semester" : "monthly";
+  const waiverAccepted = formData.get("waiver") === "on";
+  if (!waiverAccepted && houseToken) redirect(`/join/${houseToken}?error=waiver`);
   if (!houseToken || !firstName || !lastName || !email || !phone) {
     redirect("/signup?error=invalid");
   }
@@ -149,6 +152,15 @@ export async function startSignup(formData: FormData) {
     member_id: memberId,
     house_id: houseId,
     payload: { cadence, amount_cents: billing.unit_amount },
+  });
+  // Durable consent record (append-only log).
+  await logEvent({
+    type: "waiver.accepted",
+    actor_type: "member",
+    actor_id: memberId,
+    member_id: memberId,
+    house_id: houseId,
+    payload: { waiver_version: copy.marketing.waiverVersion, accepted_at: new Date().toISOString() },
   });
 
   if (!session.url) backToForm("stripe");
