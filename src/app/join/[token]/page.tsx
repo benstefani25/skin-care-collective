@@ -1,6 +1,7 @@
 // Per-house signup (T2-4). Reached via the house's opaque link/QR. The house
 // is resolved from the token server-side; there is no public list of houses.
 import { config } from "@/config/app";
+import { copy } from "@/config/copy";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { Wordmark } from "@/components/Wordmark";
 import { fmtUsd, semesterAmountCents } from "@/lib/pricing";
@@ -14,6 +15,9 @@ const ERRORS: Record<string, string> = {
   cancelled: "No worries — your card wasn't charged. Ready when you are.",
   stripe: "Something went wrong starting checkout. Try again in a minute.",
   rate_limited: "Too many attempts — give it a few minutes and try again.",
+  waiver: copy.marketing.waiverRequired,
+  signature: copy.marketing.waiverSignRequired,
+  sms_consent: copy.marketing.smsConsentRequired,
 };
 
 export default async function JoinPage({
@@ -84,10 +88,31 @@ export default async function JoinPage({
         </label>
       </fieldset>
 
+      {/* Waiver — e-signature consent collected at signup (R2-5). */}
+      <div className="card stack" style={{ marginBottom: 0 }}>
+        <details>
+          <summary style={{ fontWeight: 600, cursor: "pointer" }}>{copy.marketing.waiverTitle}</summary>
+          <p className="fine" style={{ marginTop: 8 }}>{copy.marketing.waiverText}</p>
+        </details>
+        <label className="check">
+          <input type="checkbox" name="waiver" value="on" required />
+          <span>{copy.marketing.waiverAgree}</span>
+        </label>
+        <label className="check">
+          <input type="checkbox" name="sms_consent" value="on" required />
+          <span>{copy.marketing.smsConsentLabel}</span>
+        </label>
+        <label>
+          {copy.marketing.waiverSignLabel}
+          <input name="signature" autoComplete="name" placeholder="Your full legal name" required />
+        </label>
+      </div>
+
+      <p className="banner ok" style={{ marginBottom: 0 }}>{copy.marketing.checkoutNeverPay}</p>
       <button className="btn full" type="submit">Continue to payment</button>
       <p className="fine">
-        Card on file — never pay at an appointment. Your exact total is shown on the secure
-        checkout page. Pause or cancel anytime from your account.
+        Your exact total is shown on the secure checkout page. Pause or cancel anytime from your
+        account.
       </p>
     </form>
   );

@@ -21,7 +21,9 @@ const sans = Figtree({
 });
 
 export const metadata: Metadata = {
-  title: config.brandName,
+  // Brand lives in config; page titles set just their own text and the
+  // template appends the brand (no hardcoded brand strings in pages).
+  title: { default: config.brandName, template: `%s — ${config.brandName}` },
   description: "Recurring spray tans, delivered to your house.",
 };
 
