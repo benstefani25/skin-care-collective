@@ -45,6 +45,7 @@ export const copy = {
     // "Find your house"/"Bring SCC" labels per founder feedback.)
     ctaFindHouse: "Join your house",
     ctaBringScc: "Request your house",
+    heroEyebrow: "Cosmetic sunless tanning, delivered",
     heroTrust: "We come to you · card on file · pause anytime",
     // R2-3: reassurance at the moment of payment (also lives in the FAQ).
     checkoutNeverPay:
@@ -59,7 +60,7 @@ export const copy = {
     ],
     heroHeadline: "A fresh glow, without leaving the house.",
     heroLede:
-      "Skin-conscious spray tans delivered to your house on a set schedule — one flat monthly membership, booked in seconds online or by text.",
+      "Skin-conscious spray tans delivered to your house on a set schedule — one flat monthly membership, booked in seconds.",
     heroSub: "Already a member at your house? Find it below. New to us? Bring us to your house.",
     neverPayTech: "You never pay your technician — membership is billed to your card on file.",
     noSunProtection:

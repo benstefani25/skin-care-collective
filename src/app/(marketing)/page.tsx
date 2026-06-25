@@ -19,15 +19,22 @@ export default function Home() {
   const m = copy.marketing;
   return (
     <div className="marketing">
-      <section className="hero">
-        <h1>{m.heroHeadline}</h1>
-        <p className="lede">{m.heroLede}</p>
-        {/* W-2: two-intent CTAs, both visible on the hero (DECIDED). */}
-        <div className="hero-actions">
-          <Link className="btn full" href="/find">{m.ctaFindHouse}</Link>
-          <Link className="btn secondary full" href="/bring-scc">{m.ctaBringScc}</Link>
+      {/* Editorial "Treatment B" hero: full-bleed, warm gradient standing in
+          for future photography, dark scrim for legibility. Content + links
+          unchanged. To drop in a real photo later, swap --hero-bg in globals. */}
+      <section className="editorial-hero">
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <p className="hero-eyebrow">{m.heroEyebrow}</p>
+            <h1>{m.heroHeadline}</h1>
+            <p className="hero-sub">{m.heroLede}</p>
+            <div className="hero-actions">
+              <Link className="btn btn-cream" href="/find">{m.ctaFindHouse}</Link>
+              <Link className="btn btn-outline" href="/bring-scc">{m.ctaBringScc}</Link>
+            </div>
+            <p className="hero-trust">{m.heroTrust}</p>
+          </div>
         </div>
-        <p className="trust">{m.heroTrust}</p>
       </section>
 
       <section className="mk-section">

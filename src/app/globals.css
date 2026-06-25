@@ -1,4 +1,11 @@
 :root {
+  /* ── Editorial hero background (SWAP HOOK) ──────────────────────────────
+     This warm gradient stands in for future photography. To use a real photo
+     later, replace ONLY this value, e.g.:
+       --hero-bg: url("/hero.jpg") center / cover no-repeat;
+     The dark scrim and all text styling stay as-is. */
+  --hero-bg: linear-gradient(115deg, #b58e6e 0%, #8f6a47 50%, #4a3624 100%);
+
   /* Warm, sun-kissed palette — a real beauty/wellness identity */
   --bg: #faf5ee;
   --bg-warm: #f4ebdf;
@@ -193,6 +200,110 @@ body:has(.marketing) main { max-width: 720px; }
   .mk-step { flex: 1; }
   .mk-cols { flex-direction: row; }
   .mk-cols .card { flex: 1; }
+}
+
+/* ── Editorial "Treatment B" hero ─────────────────────────────────────────
+   Full-bleed: breaks out of the constrained <main> via the 100vw trick, and
+   pulls up under the sticky header by cancelling .mk-content's top padding. */
+.editorial-hero {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-top: -28px;
+  min-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* copy sits low, on the darker part of the scrim */
+  overflow: hidden;
+  isolation: isolate;
+}
+.editorial-hero::before { /* background (gradient stand-in or future photo) */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: var(--hero-bg);
+}
+.editorial-hero::after { /* vertical dark scrim for legibility */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(20, 16, 12, 0.55) 0%,
+    rgba(20, 16, 12, 0.42) 35%,
+    rgba(20, 16, 12, 0.78) 100%
+  );
+}
+.editorial-hero .hero-inner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 64px) clamp(44px, 9vh, 104px);
+}
+.editorial-hero .hero-copy { max-width: 70%; } /* left-aligned, left ~70% on desktop */
+.editorial-hero .hero-eyebrow {
+  font-family: var(--font-display), Georgia, serif;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #e8ddd2;
+  margin: 0 0 18px;
+}
+.editorial-hero h1 {
+  font-family: var(--font-display), Georgia, serif;
+  color: #fbf8f2;
+  font-weight: 500;
+  font-size: clamp(2.7rem, 6vw, 4.6rem);
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  margin: 0 0 22px;
+}
+.editorial-hero .hero-sub {
+  font-family: var(--font-sans), sans-serif;
+  color: #ece3d8;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  line-height: 1.55;
+  max-width: 34ch;
+  margin: 0 0 30px;
+}
+.editorial-hero .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.editorial-hero .btn { border-radius: 0; box-shadow: none; min-height: 52px; }
+.btn-cream {
+  background: #f5f3ec;
+  color: #1a1410;
+  border: 0;
+}
+.btn-cream:hover { background: #fffdf8; color: #1a1410; }
+.btn-outline {
+  background: transparent;
+  color: #f5f3ec;
+  border: 0.5px solid rgba(245, 243, 236, 0.6);
+}
+.btn-outline:hover { background: rgba(245, 243, 236, 0.12); color: #fff; border-color: rgba(245, 243, 236, 0.9); }
+.editorial-hero .hero-trust {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  color: #e8ddd2;
+  font-size: 1.02rem;
+  margin: 24px 0 0;
+}
+
+@media (max-width: 640px) {
+  .editorial-hero { min-height: 80vh; }
+  .editorial-hero .hero-copy { max-width: 100%; }
+  .editorial-hero::after { /* a touch more scrim so text holds up on small screens */
+    background: linear-gradient(
+      to bottom,
+      rgba(20, 16, 12, 0.6) 0%,
+      rgba(20, 16, 12, 0.5) 35%,
+      rgba(20, 16, 12, 0.86) 100%
+    );
+  }
+  .editorial-hero .hero-actions { flex-direction: column; }
+  .editorial-hero .btn { width: 100%; }
 }
 
 /* Marketing shell (W-3): wide page, readable content column */
