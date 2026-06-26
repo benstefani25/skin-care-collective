@@ -45,12 +45,13 @@ export async function startSignup(formData: FormData) {
   }
 
   const db = supabaseAdmin();
-  const { data: house } = await db
+  const { data: house, error: houseErr } = await db
     .from("houses")
     .select("*")
     .eq("signup_token", houseToken)
     .eq("status", "active")
     .maybeSingle();
+  console.log("[signup] house lookup", { houseToken, found: !!house, error: houseErr?.message });
   if (!house) redirect("/signup?error=invalid");
   const houseId = house.id;
   const backToForm = (err: string) => redirect(`/join/${houseToken}?error=${err}`);
