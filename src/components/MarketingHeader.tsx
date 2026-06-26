@@ -22,7 +22,7 @@ export function MarketingHeader() {
 
         <div className="mk-header-actions">
           <Link href="/login" className="mk-login">{copy.marketing.memberLogin}</Link>
-          <Link href="/find" className="btn small">{copy.marketing.ctaFindHouse}</Link>
+          <Link href="/signup" className="btn small">{copy.marketing.ctaFindHouse}</Link>
         </div>
 
         <details className="mk-menu">
@@ -31,7 +31,7 @@ export function MarketingHeader() {
             {navItems.map((n) => (
               <Link key={n.href} href={n.href}>{n.label}</Link>
             ))}
-            <Link href="/find">{copy.marketing.ctaFindHouse}</Link>
+            <Link href="/signup">{copy.marketing.ctaFindHouse}</Link>
             <Link href="/login" className="muted">{copy.marketing.memberLogin}</Link>
           </div>
         </details>

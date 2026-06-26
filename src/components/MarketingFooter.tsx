@@ -11,7 +11,7 @@ export function MarketingFooter() {
         {copy.marketing.navItems.map((n) => (
           <Link key={n.href} href={n.href}>{n.label}</Link>
         ))}
-        <Link href="/bring-scc">{copy.marketing.ctaBringScc}</Link>
+        <Link href="/request-house">{copy.marketing.ctaBringScc}</Link>
       </nav>
       <p className="fine">{copy.marketing.footerTagline} · {config.brandName} · {new Date().getFullYear()}</p>
       <p className="fine">{copy.marketing.noSunProtection}</p>

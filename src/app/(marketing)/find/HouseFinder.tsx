@@ -57,7 +57,7 @@ export function HouseFinder({ houses }: { houses: House[] }) {
 
       <p className="fine">
         Don&apos;t see your house?{" "}
-        <Link href="/bring-scc">{copy.marketing.ctaBringScc}</Link>.
+        <Link href="/request-house">{copy.marketing.ctaBringScc}</Link>.
       </p>
     </div>
   );

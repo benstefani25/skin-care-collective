@@ -45,7 +45,7 @@ export default function Pricing() {
       </section>
 
       <p className="trust">{p.neverPay}</p>
-      <Link className="btn full" href="/find">{copy.marketing.ctaFindHouse}</Link>
+      <Link className="btn full" href="/signup">{copy.marketing.ctaFindHouse}</Link>
     </div>
   );
 }

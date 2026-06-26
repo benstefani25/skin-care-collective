@@ -28,7 +28,7 @@ export default async function FindPage() {
       {list.length === 0 ? (
         <div className="card">
           <p className="muted">{copy.marketing.findNoHouses}</p>
-          <Link className="btn full" href="/bring-scc">{copy.marketing.ctaBringScc}</Link>
+          <Link className="btn full" href="/request-house">{copy.marketing.ctaBringScc}</Link>
         </div>
       ) : (
         <HouseFinder houses={list} />

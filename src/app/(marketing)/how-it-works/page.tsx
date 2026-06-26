@@ -43,7 +43,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <Link className="btn full" href="/find">{copy.marketing.ctaFindHouse}</Link>
+      <Link className="btn full" href="/signup">{copy.marketing.ctaFindHouse}</Link>
     </div>
   );
 }

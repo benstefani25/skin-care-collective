@@ -67,8 +67,8 @@ export const copy = {
     ],
     heroHeadline: "A fresh glow, without leaving the house.",
     heroLede:
-      "Skin-conscious spray tans delivered to your house on a set schedule — one flat monthly membership, booked in seconds.",
-    heroSub: "Already a member at your house? Find it below. New to us? Bring us to your house.",
+      "Skin-conscious spray tans delivered to your house on a set schedule — same glow, none of the overnight wait. One flat monthly membership, booked in seconds.",
+    heroSub: "Ready to glow? Sign up and pick your house — or request yours if it's not there yet.",
     neverPayTech: "You never pay your technician — membership is billed to your card on file.",
     noSunProtection:
       "A spray tan is cosmetic color only — it offers no sun protection. Keep wearing SPF as you normally would.",

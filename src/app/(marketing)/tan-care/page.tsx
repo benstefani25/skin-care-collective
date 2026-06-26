@@ -45,7 +45,7 @@ export default function TanCare() {
       </section>
 
       <p className="banner ok">{copy.marketing.noSunProtection}</p>
-      <Link className="btn full" href="/find">{copy.marketing.ctaFindHouse}</Link>
+      <Link className="btn full" href="/signup">{copy.marketing.ctaFindHouse}</Link>
     </div>
   );
 }
