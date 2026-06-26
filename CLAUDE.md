@@ -1,37 +1,54 @@
 # Skin Care Collective platform
 
-Mobile spray-tan membership platform for sorority houses. Full handoff spec: `docs/SPEC.md` — read it before building anything new.
+Mobile spray-tan membership platform for sorority houses, operated fully remotely by the founder. Full original handoff spec: `docs/SPEC.md`. Active work specs: `docs/scc-website-build-CONSOLIDATED.md` (website) and `docs/scc-claude-code-instructions.md` (security/correctness hardening). Read the relevant doc before building.
 
-## Non-negotiable invariants (spec §1)
+## Non-negotiable invariants
 1. **Techs never see member contact info** — no phone/email/last name in any tech-facing query or API payload. Enforced at the DB layer (`tech_runsheet` view + RLS), never client-side.
-2. **No money at appointments** — Stripe subscription only; no payment surface in the tech app, no refunds/charges in any AI agent tool.
+2. **No money at appointments** — Stripe only; no payment surface in the tech app, no refunds/charges in any AI agent tool.
 3. **All member↔tech communication goes through the masked brand number.**
+4. Every meaningful state change writes to the append-only `events` table (the remote founder's only window into operations). `bonus_ledger` is written only by deterministic payroll code — never AI.
 
-Also: every meaningful state change writes to the append-only `events` table (the remote founder's only window into operations), and `bonus_ledger` is written only by deterministic payroll code — never AI.
+## Build status
+- **M1–M5 (done & verified):** schema+RLS, slot generation + standing placement, member signup/book/cancel/reschedule, reminders, Stripe webhooks; tech run sheet (reads `tech_runsheet` view via tech's own session) + check-in/complete/no-show + deferred bonus accrual w/ semester escalator + payroll CSV w/ minimum-wage true-up; member concierge (inbound SMS → Claude tool-use, server-bound to texting member, no money tools, medical→escalate); founder console at `/founder` (exceptions, house CRM, members/techs, visits calendar, payroll, QC weekly digest); tech copilot (SOP-grounded, wall applies to context).
 
-## Status
-- **M1 (done):** schema + RLS, slot generation + standing placement, Stripe Checkout signup, member book/cancel/reschedule, one-tap SMS links, reminders, Stripe webhooks, seed.
-- **M2 (done):** tech run sheet (reads `tech_runsheet` view via the tech's own session — never base tables), visit + appointment check-in/complete/no-show, missed-you SMS, deferred bonus accrual with semester escalator, earnings screen, biweekly payroll CSV with minimum-wage true-up (`npm run payroll`). Wall verified: tech JWT gets today's view rows only, `[]` from every base table.
-- **M3 (done):** member concierge (spec §11a) — inbound SMS → Claude (`claude-opus-4-8`) with tool use → SMS reply. Tools bound server-side to the texting member (book/reschedule/cancel/toggle-standing/portal-link/forward-to-tech/escalate); no money tools exist. Medical/complaint/refund → escalate; pause/card/cancel → portal link. Tech relay inbox at `/tech/messages`. Inbound webhook at `/api/webhooks/twilio` (signature-validated in prod). Test harness: `npm run sms -- "+1..." "text"`. 10-scenario exit test passed incl. medical escalation.
-- **M4 (done):** founder console at `/founder` (gated by `FOUNDER_EMAIL`, single owner per §7/§14). Exceptions feed (escalations, past-due, under-threshold, low ratings, no-show spike, tech-not-checked-in), house CRM with health (active/churn/avg rating/fill rate) + status/director/insurance edit, searchable members & techs with manual edit, visits calendar (create+generate slots / reassign / cancel-with-member-notify), payroll view + CSV export at `/founder/payroll/export`, and the QC analyst weekly digest (`src/lib/qc.ts`, `claude-opus-4-8`) — Healthy/Watch/Act with evidence + drafted director check-ins, stored to `digests`, never auto-sent. Cron `/api/cron/digest` (weekly).
-- **M5 (done):** tech copilot (spec §11b) at `/tech/copilot` — SOP-grounded chat (`src/lib/copilot.ts`, `claude-opus-4-8`). Full active `sop_documents` corpus injected directly (no vector search); today's run-sheet metadata included WITHOUT contact info (wall applies to context too). Tools: `escalate`, `search_sops`. Refuses to improvise outside the SOPs; hard medical escalation. Every Q&A logs a `copilot.qa` event (answered vs escalated) — the founder's map of where SOPs are thin. Seed includes 3 starter SOPs.
+## ACTIVE WORK (post-M5 — see docs/)
+Two streams, shippable as separate PRs:
 
-All five milestones (M1–M5) are built and verified against the live DB + Claude API.
+### Website stream — `docs/scc-website-build-CONSOLIDATED.md`
+- **Dark espresso editorial theme ("Treatment B") applied site-wide** — REPLACES the old light-cream `:root` palette. Hero gradient `#b58e6e→#8f6a47→#4a3624` + dark scrim, espresso page bgs `#161310`, lifted form inputs `#221d18` w/ visible borders (critical for dark-form legibility), near-white `#fbf8f2` headings in Fraunces, soft `#cfc7ba` body, squared off-white buttons. (Part A-0 is authoritative on tokens.)
+- Hero CTAs: primary **"Sign Up"** (→ signup, house picked inside) + secondary **"Request your house"** (→ new-chapter interest form). House selection folded INTO signup (supersedes an earlier two-button "Find your house" design).
+- New pages: How it works, Tan Care (Prep + Aftercare), Pricing, FAQ, Contact, request-house. Ready copy is in the doc. Express-only positioning (NEVER mention traditional/overnight tans); cosmetic framing only (no health/sun-protection claims; rinse-timing numbers are provisional config).
+- **Deferred billing (C-1b, HIGH PRIORITY):** signup must SAVE the card (Stripe `mode:"setup"` / SetupIntent) and NOT charge. New member status `card_on_file` (excluded from billing + auto-booking). Per-house founder "launch" action creates the real subscription + first charge in August, moves member to `active`. Handle launch-time charge failures gracefully (notify + flag, never drop). Clear deferred-billing disclosure at signup. The CURRENT signup wrongly creates a charging subscription — this must change before collecting founding members.
+- Staff auth: persistent sessions for all roles + real passwords for staff (members keep magic links).
+- E-signature waiver + SMS consent at signup (typed signature + immutable timestamped record; content needs legal review).
+- Read-only founder "ops agent" (the chat UI currently shown is a dead stub — hide it now; build the real read-only agent as its own PR).
+
+### Hardening stream — `docs/scc-claude-code-instructions.md`
+Tier 0 (before real member data): mark `tech_runsheet` `security_invoker` + add the tech-wall integration test; fix cancelled/paused members keeping future slots; deterministic safe-reply on concierge escalate; confirm cron auth; rotate leaked secrets. Tier 1: pricing reconciliation ($89 vs the $65 still in config), Stripe Tax, webhook idempotency + async Twilio, rate limiting, phone-normalization tests. Tier 2: marketing site, staff roles, CRM, ops agent, payroll-provider export, liaison program, Supabase types.
+
+## Known environment state (discovered, verify before launch)
+- **Stripe + Supabase**: keys present in Vercel (Supabase connected; Stripe connected — CONFIRM test vs live mode before charging real members).
+- **Anthropic**: key present (rotated recently).
+- **Twilio**: NOT set up (no account/keys). ALL SMS features (concierge replies, reminders, relay) are dormant until Twilio + A2P 10DLC registration is done. This is a human task with carrier-approval lead time.
+- Local `.env.local` lacks the Stripe/Supabase keys that Vercel has — local dev needs them copied in.
 
 ## AI agents
-- System prompts are versioned config in `src/config/prompts.ts` (never inline). Bump `CONCIERGE_PROMPT_VERSION` on changes — it's stamped into events.
-- Every agent tool call writes a `concierge.tool_used` event; escalations write `message.escalated` with `escalated=true` on the message. AI never writes `bonus_ledger` or moves money.
-- `ANTHROPIC_API_KEY` required for the concierge; `FOUNDER_PHONE` (optional) gets escalation texts.
-- Spec §14 lists explicit non-goals — do not build them.
+- System prompts are versioned config in `src/config/prompts.ts` (never inline). Models centralized via config. Every agent tool call writes an event; escalations set `escalated=true`. AI never writes `bonus_ledger` or moves money. No agent sends to house directors (drafts only).
 
 ## Layout
-- `supabase/migrations/` — schema (0001) and RLS + tech_runsheet view (0002)
+- `supabase/migrations/` — schema (0001), RLS + tech_runsheet view (0002), plus new hardening migrations
 - `src/config/` — founder decisions (`app.ts`) and ALL customer-facing copy (`copy.ts`; brand name is config, never hardcode)
-- `src/lib/` — business rules (booking.ts, slots.ts), integrations (stripe, twilio), signed one-tap links (links.ts)
-- `src/app/` — member pages + API routes (webhooks, cron)
+- `src/lib/` — business rules (booking, slots), integrations (stripe, twilio), agents (concierge, copilot, qc), signed links
+- `src/app/` — member/tech/founder pages + API routes (webhooks, cron)
 - Mutations run server-side via the service role; RLS covers direct client reads.
 
 ## Commands
 - `npm run dev` / `npm run build` / `npm run typecheck`
-- `npm run seed` — demo house/tech/members + first visits (idempotent)
-- `npm run generate-slots` — manual visit/slot generation
+- `npm run seed` — demo data (idempotent)
+- `npm run generate-slots`, `npm run payroll`, `npm run sms -- "+1..." "text"`
+
+## Working rules for this codebase
+- Read the relevant doc before building; one item = one commit; run each Verify step.
+- Don't weaken any security check to make a feature easier — stop and flag instead.
+- Don't build the spec's non-goals.
+- All copy in `copy.ts`; brand name + price via config, never hardcoded.
