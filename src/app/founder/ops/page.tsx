@@ -1,7 +1,6 @@
 import { FounderNav } from "@/components/FounderNav";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { fmtDate } from "@/lib/time";
-import { OpsChat } from "./OpsChat";
 import { generateBriefAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +39,7 @@ export default async function OpsPage() {
 
       <section className="card">
         <h2>Ask anytime</h2>
-        <OpsChat />
+        <p className="muted">Ops assistant — coming soon.</p>
       </section>
     </div>
   );
