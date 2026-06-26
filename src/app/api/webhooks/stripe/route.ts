@@ -47,7 +47,47 @@ export async function POST(req: Request) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const memberId = session.metadata?.member_id;
-      if (memberId) {
+      if (!memberId) break;
+
+      if (session.mode === "setup") {
+        // Deferred billing (C-1b): SetupIntent completed — card saved, no charge.
+        // Retrieve the payment method from the SetupIntent and store it so the
+        // launch action can create the subscription without another checkout.
+        const setupIntentId = typeof session.setup_intent === "string"
+          ? session.setup_intent
+          : session.setup_intent?.id;
+        let paymentMethodId: string | null = null;
+        if (setupIntentId) {
+          const si = await getStripe().setupIntents.retrieve(setupIntentId);
+          paymentMethodId = typeof si.payment_method === "string"
+            ? si.payment_method
+            : si.payment_method?.id ?? null;
+          // Set as the customer's default so the launch subscription charges it.
+          if (paymentMethodId && typeof session.customer === "string") {
+            await getStripe().customers.update(session.customer, {
+              invoice_settings: { default_payment_method: paymentMethodId },
+            });
+          }
+        }
+        // Update status; then separately update payment method id if captured.
+        // Two updates because the generated type doesn't include the new column
+        // until types are regenerated post-migration.
+        await db.from("members").update({ status: "card_on_file" }).eq("id", memberId);
+        if (paymentMethodId) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (db.from("members") as any)
+            .update({ stripe_payment_method_id: paymentMethodId })
+            .eq("id", memberId);
+        }
+        await logEvent({
+          type: "member.card_saved",
+          actor_type: "system",
+          member_id: memberId,
+          payload: { checkout_session: session.id, setup_intent: setupIntentId },
+        });
+      } else if (session.mode === "subscription") {
+        // Direct subscription checkout (used by the launch action redirect path,
+        // or future non-deferred signups).
         const update: TablesUpdate<"members"> = { status: "active" };
         if (typeof session.customer === "string") update.stripe_customer_id = session.customer;
         if (typeof session.subscription === "string") {

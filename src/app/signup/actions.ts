@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import type Stripe from "stripe";
 import { config } from "@/config/app";
 import { rateLimit } from "@/lib/ratelimit";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -12,7 +11,7 @@ import { normalizePhone } from "@/lib/phone";
 import { memberToken } from "@/lib/links";
 import { copy } from "@/config/copy";
 import { TablesInsert } from "@/lib/supabase/types";
-import { cadenceCheckout, Cadence } from "@/lib/pricing";
+import type { Cadence } from "@/lib/pricing";
 
 export async function startSignup(formData: FormData) {
   // House is resolved from the opaque per-house signup token (T2-4) — never a
@@ -116,41 +115,19 @@ export async function startSignup(formData: FormData) {
     await db.from("members").update({ stripe_customer_id: customerId }).eq("id", memberId);
   }
 
-  // Cadence: monthly recurring, or a prepaid semester (a 4-month-interval
-  // subscription, derived from the house's own monthly price). Both reuse the
-  // existing subscription machinery — portal, pause, cancel, dunning all work.
-  const billing = cadenceCheckout(cadence, house.monthly_price_cents);
-  // Sales tax (T1-2): when enabled, let Stripe compute tax and collect the
-  // address it needs. Gated so checkout never breaks before Stripe Tax is set
-  // up in the dashboard. Processing fees are baked into the price, never
-  // surcharged.
-  const tax: Stripe.Checkout.SessionCreateParams = config.enableStripeTax
-    ? {
-        automatic_tax: { enabled: true },
-        billing_address_collection: "required",
-        customer_update: { address: "auto" },
-      }
-    : {};
+  // Deferred billing (C-1b): save the card now, charge at house launch.
+  // We use mode:"setup" (SetupIntent) — no subscription is created here.
+  // The founder triggers the real subscription per house via the launch action.
+  // The cadence preference is stored in metadata so the launch script can
+  // create the right interval subscription later.
   const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
+    mode: "setup",
     customer: customerId,
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: "usd",
-          unit_amount: billing.unit_amount,
-          recurring: { interval: billing.interval, interval_count: billing.interval_count },
-          ...(config.enableStripeTax ? { tax_behavior: "exclusive" as const } : {}),
-          product_data: { name: `${config.brandName} membership — ${house.name} (${billing.label})` },
-        },
-      },
-    ],
+    currency: "usd",
     success_url: `${config.appBaseUrl}/signup/preferences?t=${memberToken(memberId)}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${config.appBaseUrl}/join/${houseToken}?error=cancelled`,
-    metadata: { member_id: memberId },
-    subscription_data: { metadata: { member_id: memberId, cadence } },
-    ...tax,
+    metadata: { member_id: memberId, cadence, house_id: houseId },
+    setup_intent_data: { metadata: { member_id: memberId, cadence, house_id: houseId } },
   });
 
   await logEvent({
@@ -159,7 +136,7 @@ export async function startSignup(formData: FormData) {
     actor_id: memberId,
     member_id: memberId,
     house_id: houseId,
-    payload: { cadence, amount_cents: billing.unit_amount },
+    payload: { cadence },
   });
   // Immutable, tamper-evident consent records (append-only events log, R2-5).
   const signedAt = new Date().toISOString();

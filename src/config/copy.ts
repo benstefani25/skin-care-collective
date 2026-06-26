@@ -50,6 +50,13 @@ export const copy = {
     // R2-3: reassurance at the moment of payment (also lives in the FAQ).
     checkoutNeverPay:
       "Your membership is billed to the card on file. You'll never pay your technician at an appointment.",
+    // C-1b: deferred billing disclosure — shown at the card-save step and on
+    // the card_on_file member dashboard. Card-network requirement: must be
+    // unambiguous before the SetupIntent completes.
+    deferredBillingDisclosure:
+      "We're saving your card now — you won't be charged until we launch at your house. We'll let you know before your first charge.",
+    deferredBillingDashboard:
+      "You're all set! Your card is saved and your spot is reserved. We'll charge your first month and notify you when we launch at your house.",
     memberLogin: "Member login",
     navItems: [
       { href: "/how-it-works", label: "How it works" },

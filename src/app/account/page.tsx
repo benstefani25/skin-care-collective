@@ -49,14 +49,20 @@ export default async function AccountPage({
 
       <section className="card">
         <h2>Billing</h2>
-        <p className="muted">
-          Card, summer pause, or cancel — all handled in the secure billing portal.
-        </p>
-        <form action={portalAction}>
-          <button className="btn secondary" type="submit">
-            Manage billing
-          </button>
-        </form>
+        {member.status === "card_on_file" ? (
+          <p className="banner ok" style={{ marginBottom: 0 }}>{copy.marketing.deferredBillingDashboard}</p>
+        ) : (
+          <>
+            <p className="muted">
+              Card, summer pause, or cancel — all handled in the secure billing portal.
+            </p>
+            <form action={portalAction}>
+              <button className="btn secondary" type="submit">
+                Manage billing
+              </button>
+            </form>
+          </>
+        )}
       </section>
 
       <form action={logoutAction}>
