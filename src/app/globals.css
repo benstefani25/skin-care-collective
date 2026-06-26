@@ -6,28 +6,40 @@
      The dark scrim and all text styling stay as-is. */
   --hero-bg: linear-gradient(115deg, #b58e6e 0%, #8f6a47 50%, #4a3624 100%);
 
-  /* Warm, sun-kissed palette — a real beauty/wellness identity */
-  --bg: #faf5ee;
-  --bg-warm: #f4ebdf;
-  --ink: #2c2018;
-  --muted: #8c7a6a;
-  --card: #fffdfa;
-  --line: #ece0d1;
-  --line-strong: #ddcdb8;
-  --accent: #c2683c;
-  --accent-deep: #9c4f2a;
-  --accent-soft: #f6e7db;
-  --accent-ink: #fffaf5;
+  /* ── Dark espresso editorial palette (A-0) — the canonical theme. Every
+     surface derives color from these tokens; never hardcode literals in
+     components. Tonal layering: page < warm/card < field, so hierarchy and
+     form fields stay visible on dark. */
+  --bg: #161310;          /* page background, deep espresso */
+  --bg-warm: #1f1b16;     /* lifted surface / bands */
+  --ink: #fbf8f2;         /* primary text / headlines, near-white */
+  --body: #cfc7ba;        /* body text, soft warm off-white */
+  --muted: #9a988f;       /* secondary / muted */
+  --card: #1f1b16;        /* card surface, lifted from page */
+  --line: #322c24;        /* hairline border on dark */
+  --line-strong: #4a443b; /* stronger border (cards/inputs) */
+
+  --field-bg: #221d18;    /* input bg — lifted further so fields are obvious */
+  --field-border: #4a443b;/* visible input border */
+
+  --cream: #f5f3ec;       /* primary button fill */
+  --cream-ink: #1a1611;   /* text on the cream button */
+  --eyebrow: #e8ddd2;     /* eyebrow / trust line warm tan */
+
+  --accent: #d8a878;      /* warm gold — links, active nav, accents */
+  --accent-deep: #c9954f; /* hover/stronger gold */
+  --accent-soft: #2a2118; /* dark gold-tinted soft fill */
+  --accent-ink: #1a1611;
   --glow: #e9b676;
-  --danger: #b8453d;
-  --danger-soft: #f7e6e3;
-  --ok: #3f7a55;
-  --ok-soft: #e6f0e7;
+  --danger: #e8857f;      /* light red, legible on dark */
+  --danger-soft: #3a201e;
+  --ok: #84c79c;          /* light green on dark */
+  --ok-soft: #1e2a22;
 
   --radius: 14px;
   --radius-lg: 20px;
-  --shadow: 0 1px 2px rgba(76, 48, 28, 0.04), 0 6px 20px rgba(76, 48, 28, 0.06);
-  --shadow-lift: 0 2px 6px rgba(76, 48, 28, 0.06), 0 12px 32px rgba(76, 48, 28, 0.1);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 2px 6px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.45);
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -35,7 +47,7 @@
 html, body { margin: 0; padding: 0; }
 body {
   background: var(--bg);
-  color: var(--ink);
+  color: var(--body);
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
   line-height: 1.6;
@@ -51,7 +63,9 @@ h1 {
   line-height: 1.15;
   letter-spacing: -0.01em;
   margin: 0 0 10px;
+  color: var(--ink);
 }
+h2, h3 { color: var(--ink); }
 h2 {
   font-family: var(--font-display), Georgia, serif;
   font-weight: 500;
@@ -80,10 +94,10 @@ p { margin: 0 0 10px; }
   justify-content: center;
   gap: 8px;
   min-height: 52px;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--cream); /* squared off-white primary (dark editorial) */
+  color: var(--cream-ink);
   border: 0;
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 14px 22px;
   font-family: inherit;
   font-size: 1.02rem;
@@ -91,22 +105,22 @@ p { margin: 0 0 10px; }
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(156, 79, 42, 0.18), 0 8px 20px rgba(194, 104, 60, 0.22);
-  transition: transform 0.12s var(--ease), box-shadow 0.18s var(--ease), background 0.18s var(--ease);
+  box-shadow: none;
+  transition: transform 0.12s var(--ease), background 0.18s var(--ease), opacity 0.18s var(--ease);
 }
-.btn:hover { background: var(--accent-deep); box-shadow: 0 2px 4px rgba(156, 79, 42, 0.2), 0 12px 28px rgba(194, 104, 60, 0.26); }
+.btn:hover { background: #fffdf8; }
 .btn:active { transform: translateY(1px) scale(0.99); }
 .btn.secondary {
   background: transparent;
-  color: var(--accent-deep);
-  border: 1.5px solid var(--line-strong);
+  color: var(--ink);
+  border: 0.5px solid var(--line-strong);
   box-shadow: none;
 }
 .btn.secondary:hover { background: var(--accent-soft); border-color: var(--accent); }
-.btn.small { min-height: 42px; padding: 9px 16px; font-size: 0.92rem; box-shadow: 0 1px 2px rgba(156, 79, 42, 0.14), 0 4px 12px rgba(194, 104, 60, 0.16); }
-.btn.danger { background: transparent; color: var(--danger); border: 1.5px solid var(--danger-soft); box-shadow: none; }
-.btn.danger:hover { background: var(--danger-soft); border-color: var(--danger); }
-.btn.link { background: none; border: none; color: var(--muted); text-decoration: underline; padding: 0; min-height: 0; font-size: 0.92rem; box-shadow: none; }
+.btn.small { min-height: 42px; padding: 9px 16px; font-size: 0.92rem; box-shadow: none; }
+.btn.danger { background: transparent; color: var(--danger); border: 0.5px solid var(--danger); box-shadow: none; }
+.btn.danger:hover { background: var(--danger-soft); }
+.btn.link { background: none; border: none; color: var(--accent); text-decoration: underline; padding: 0; min-height: 0; font-size: 0.92rem; box-shadow: none; }
 .btn.link:hover { background: none; color: var(--ink); }
 .btn:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
 .btn.full { width: 100%; }
@@ -120,19 +134,19 @@ input, select, textarea {
   font-size: 1rem;
   min-height: 50px;
   padding: 13px 14px;
-  border: 1.5px solid var(--line-strong);
+  border: 1.5px solid var(--field-border); /* visible on dark — fields must never blend in */
   border-radius: var(--radius);
-  background: var(--card);
+  background: var(--field-bg);
   color: var(--ink);
   width: 100%;
   font-weight: 400;
   transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
-input::placeholder { color: #b6a695; }
+input::placeholder, textarea::placeholder { color: var(--muted); }
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  box-shadow: 0 0 0 3px rgba(216, 168, 120, 0.25);
 }
 input.short { width: 96px; min-width: 96px; }
 .row select { width: auto; flex: 1; min-width: 0; }
@@ -382,7 +396,7 @@ fieldset.cadence legend { font-weight: 600; font-size: 0.9rem; margin-bottom: 4p
 .cadence-opt input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
 
 /* Skeleton loaders — keep transitions from feeling broken */
-.skeleton { background: linear-gradient(90deg, var(--bg-warm) 25%, #efe4d6 50%, var(--bg-warm) 75%); background-size: 200% 100%; animation: shimmer 1.3s infinite; border-radius: 8px; }
+.skeleton { background: linear-gradient(90deg, var(--bg-warm) 25%, #2c261e 50%, var(--bg-warm) 75%); background-size: 200% 100%; animation: shimmer 1.3s infinite; border-radius: 8px; }
 .sk-line { height: 14px; margin: 8px 0; }
 .sk-card { height: 92px; border-radius: var(--radius-lg); margin-bottom: 12px; }
 @keyframes shimmer { to { background-position: -200% 0; } }

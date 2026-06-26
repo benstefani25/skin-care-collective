@@ -24,6 +24,25 @@ export default function HowItWorks() {
         ))}
       </div>
 
+      <section className="card mk-band" style={{ textAlign: "center" }}>
+        <h2>{h.sameGlowTitle}</h2>
+        <p className="muted">{h.sameGlowBody}</p>
+      </section>
+
+      <section>
+        <h2>{h.expectTitle}</h2>
+        <p className="muted">{h.expectIntro}</p>
+        <div className="mk-steps">
+          {h.expectSteps.map((s, i) => (
+            <div className="mk-step" key={i}>
+              <div className="mk-step-num" aria-hidden="true">{i + 1}</div>
+              <h3>{s.title}</h3>
+              <p className="muted">{s.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <Link className="btn full" href="/find">{copy.marketing.ctaFindHouse}</Link>
     </div>
   );
