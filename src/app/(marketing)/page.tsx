@@ -29,8 +29,8 @@ export default function Home() {
             <h1>{m.heroHeadline}</h1>
             <p className="hero-sub">{m.heroLede}</p>
             <div className="hero-actions">
-              <Link className="btn btn-cream" href="/find">{m.ctaFindHouse}</Link>
-              <Link className="btn btn-outline" href="/bring-scc">{m.ctaBringScc}</Link>
+              <Link className="btn btn-cream" href="/signup">{m.ctaFindHouse}</Link>
+              <Link className="btn btn-outline" href="/request-house">{m.ctaBringScc}</Link>
             </div>
             <p className="hero-trust">{m.heroTrust}</p>
           </div>
@@ -54,8 +54,8 @@ export default function Home() {
         <h2>Ready to glow?</h2>
         <p className="muted">{m.heroSub}</p>
         <div className="hero-actions">
-          <Link className="btn full" href="/find">{m.ctaFindHouse}</Link>
-          <Link className="btn secondary full" href="/bring-scc">{m.ctaBringScc}</Link>
+          <Link className="btn full" href="/signup">{m.ctaFindHouse}</Link>
+          <Link className="btn secondary full" href="/request-house">{m.ctaBringScc}</Link>
         </div>
       </section>
     </div>

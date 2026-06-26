@@ -23,6 +23,10 @@ export default function SignupPointer() {
       <p className="fine">
         Can&apos;t find your link? Text us and we&apos;ll send it over.
       </p>
+      <p className="fine">
+        Don&apos;t see your house yet?{" "}
+        <Link href="/request-house">Request it →</Link>
+      </p>
     </div>
   );
 }
