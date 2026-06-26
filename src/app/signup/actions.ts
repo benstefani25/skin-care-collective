@@ -22,6 +22,7 @@ export async function startSignup(formData: FormData) {
   const lastName = String(formData.get("last_name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
+  console.log("[signup] fields", { houseToken: houseToken.slice(0, 8), firstName: !!firstName, lastName: !!lastName, email: !!email, phone: !!phone });
   const cadence: Cadence = formData.get("cadence") === "semester" ? "semester" : "monthly";
   // E-signature waiver + SMS consent (R2-5) — all required to complete signup.
   const waiverAccepted = formData.get("waiver") === "on";
