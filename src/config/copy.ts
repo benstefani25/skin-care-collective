@@ -112,7 +112,7 @@ export const copy = {
     ],
     sameGlowTitle: "Same glow. None of the wait.",
     sameGlowBody:
-      "An SCC tan develops just as deeply and lasts just as long as any professional spray tan — usually a glowing 5–7 days. The difference is simple: you don't have to sleep in it. Our express formula lets you rinse in just a few hours and get on with your day, while your color keeps developing to its full depth. Fast doesn't mean lighter, harsher, or rushed. It just means it fits your life.",
+      "An SCC tan develops just as deeply and lasts just as long as any professional spray tan. The difference is simple: you don't have to sleep in it. Our express formula lets you rinse in just a few hours and get on with your day, while your color keeps developing to its full depth. Fast doesn't mean lighter, harsher, or rushed. It just means it fits your life.",
     expectTitle: "What to expect when your tech arrives",
     expectIntro: "Your appointment is quick, private, and professional — start to finish in about 15–20 minutes.",
     expectSteps: [
@@ -178,7 +178,7 @@ export const copy = {
     intro: "One flat price, a fresh tan on your schedule, and nothing to pay at your appointment.",
     expressTitle: "Same glow. None of the wait.",
     expressBody:
-      "An SCC tan develops just as deeply and lasts just as long — usually a glowing 5–7 days. You simply don't have to sleep in it: rinse in just a few hours, time it to the shade you want, and get on with your day. Fast doesn't mean lighter or rushed. It's just how an SCC tan works.",
+      "An SCC tan develops just as deeply and lasts just as long. You simply don't have to sleep in it: rinse in just a few hours, time it to the shade you want, and get on with your day. Fast doesn't mean lighter or rushed. It's just how an SCC tan works.",
     includesTitle: "What's included",
     includes: [
       "Recurring visits to your house on its set schedule",
@@ -192,7 +192,7 @@ export const copy = {
   faqItems: [
     { q: "Is a spray tan safe for my skin?", a: "Yes. The color comes from DHA, an ingredient that reacts only with the outermost, already-dead layer of your skin — a surface-level cosmetic reaction, a bit like how bread browns. It doesn't soak into living skin and doesn't change how your skin naturally makes pigment. As your skin renews, the tan fades gradually and evenly." },
     { q: "Does it offer any sun protection?", a: "No — a spray tan is purely cosmetic and gives you no protection from the sun. Keep wearing SPF exactly as you normally would." },
-    { q: "Will the quick rinse time make my tan lighter or lower-quality?", a: "Not at all. “Express” refers only to how soon you rinse — the tan still develops fully and lasts the usual 5–7 days. You're just not sleeping in it." },
+    { q: "Will the quick rinse time make my tan lighter or lower-quality?", a: "Not at all. “Express” refers only to how soon you rinse — the tan still develops fully and lasts just as long. You're just not sleeping in it." },
     { q: "How long until I can shower?", a: "A few hours — you time your rinse to the shade you want (see Tan Care)." },
     { q: "What do I wear?", a: "Loose, dark clothing; see Prep." },
     { q: "Have sensitive skin, allergies, or other concerns?", a: "Just ask your tech about a patch test." },
