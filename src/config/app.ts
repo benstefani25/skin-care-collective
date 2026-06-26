@@ -34,6 +34,12 @@ export const config = {
   semesterIntervalMonths: 4, // FOUNDER DECISION — billing interval for a prepaid semester
   semesterPrepayDiscountPct: 0, // FOUNDER DECISION — e.g. 10 = 10% off vs. paying monthly
 
+  // Provisional rinse windows (cosmetic; B-4) — these are working PLACEHOLDERS,
+  // not final. Replace with the chosen tan solution's actual instructions
+  // before relying on them.
+  rinseSoftHours: 3, // soft, natural daytime glow
+  rinseDeeperHours: "4–5", // deeper, event-ready
+
   // Pay (DECIDED per spec §15)
   baseRateCents: 1000,
   deferredRateBaseCents: 250, // $2.50, +$2.50 per retained semester…

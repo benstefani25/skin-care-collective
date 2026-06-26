@@ -44,7 +44,7 @@ export default function Pricing() {
         <ul className="mk-list">{p.includes.map((x, i) => <li key={i}>{x}</li>)}</ul>
       </section>
 
-      <p className="trust">{copy.marketing.neverPayTech}</p>
+      <p className="trust">{p.neverPay}</p>
       <Link className="btn full" href="/find">{copy.marketing.ctaFindHouse}</Link>
     </div>
   );
