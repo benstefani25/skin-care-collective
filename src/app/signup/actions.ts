@@ -120,15 +120,22 @@ export async function startSignup(formData: FormData) {
   // The founder triggers the real subscription per house via the launch action.
   // The cadence preference is stored in metadata so the launch script can
   // create the right interval subscription later.
-  const session = await stripe.checkout.sessions.create({
-    mode: "setup",
-    customer: customerId,
-    currency: "usd",
-    success_url: `${config.appBaseUrl}/signup/preferences?t=${memberToken(memberId)}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${config.appBaseUrl}/join/${houseToken}?error=cancelled`,
-    metadata: { member_id: memberId, cadence, house_id: houseId },
-    setup_intent_data: { metadata: { member_id: memberId, cadence, house_id: houseId } },
-  });
+  let session;
+  try {
+    session = await stripe.checkout.sessions.create({
+      mode: "setup",
+      customer: customerId,
+      currency: "usd",
+      success_url: `${config.appBaseUrl}/signup/preferences?t=${memberToken(memberId)}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${config.appBaseUrl}/join/${houseToken}?error=cancelled`,
+      metadata: { member_id: memberId, cadence, house_id: houseId },
+      setup_intent_data: { metadata: { member_id: memberId, cadence, house_id: houseId } },
+    });
+  } catch (e) {
+    console.error("[signup] stripe checkout create failed", e);
+    backToForm(`stripe_debug_${encodeURIComponent((e as Error).message).slice(0, 120)}`);
+    return;
+  }
 
   await logEvent({
     type: "member.signup_started",

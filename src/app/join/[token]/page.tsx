@@ -60,7 +60,13 @@ export default async function JoinPage({
         <h1>Join {house.name}</h1>
         <p className="muted">A few quick details and you&apos;re set for the season.</p>
       </div>
-      {sp.error && <p className="banner error">{ERRORS[sp.error] ?? ERRORS.invalid}</p>}
+      {sp.error && (
+        <p className="banner error">
+          {sp.error.startsWith("stripe_debug_")
+            ? decodeURIComponent(sp.error.replace("stripe_debug_", ""))
+            : ERRORS[sp.error] ?? ERRORS.invalid}
+        </p>
+      )}
 
       <label>First name<input name="first_name" autoComplete="given-name" required /></label>
       <label>Last name<input name="last_name" autoComplete="family-name" required /></label>
