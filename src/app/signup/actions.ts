@@ -22,7 +22,6 @@ export async function startSignup(formData: FormData) {
   const lastName = String(formData.get("last_name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const phone = normalizePhone(String(formData.get("phone") ?? ""));
-  console.log("[signup] fields", { houseToken: houseToken.slice(0, 8), firstName: !!firstName, lastName: !!lastName, email: !!email, phone: !!phone });
   const cadence: Cadence = formData.get("cadence") === "semester" ? "semester" : "monthly";
   // E-signature waiver + SMS consent (R2-5) — all required to complete signup.
   const waiverAccepted = formData.get("waiver") === "on";
@@ -46,13 +45,12 @@ export async function startSignup(formData: FormData) {
   }
 
   const db = supabaseAdmin();
-  const { data: house, error: houseErr } = await db
+  const { data: house } = await db
     .from("houses")
     .select("*")
     .eq("signup_token", houseToken)
     .eq("status", "active")
     .maybeSingle();
-  console.log("[signup] house lookup", { houseToken, found: !!house, error: houseErr?.message });
   if (!house) redirect("/signup?error=invalid");
   const houseId = house.id;
   const backToForm = (err: string) => redirect(`/join/${houseToken}?error=${err}`);
